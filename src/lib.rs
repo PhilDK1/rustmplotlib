@@ -208,6 +208,7 @@ impl LineFMT {
         let mut mark: Option<Marker> = None;
         let mut linesty: Option<LineStyle> = None;
         let mut colour: Option<Colors> = None;
+        // implement parsing
         LineFMT {
             marker:mark,
             linestyle:linesty,
@@ -232,12 +233,12 @@ impl LineFMT {
     }
 }
 
-struct PyPlot<T> {
+pub struct PyPlot<T> {
     // struct based on python3 matplotlib pyploy.plot command 
     // using https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.pyplot.plot.html
     // as api reference
     y: Vec<T>,
-    fmt: LineFMT,
+    format: LineFMT,
     kwargs: HashMap<String, String>
 
 }
@@ -251,7 +252,7 @@ impl<T: std::clone::Clone> PyPlot<T> {
 
         PyPlot {
             y: vec,
-            fmt: LineFMT {
+            format: LineFMT {
                 marker: None,
                 linestyle: None,
                 colors: None,
@@ -260,14 +261,8 @@ impl<T: std::clone::Clone> PyPlot<T> {
         }
     }
 
-    pub fn fmt(&mut self, format: String) -> PyPlot<T> {
-        // self.fmt: LineFMT::parse_fmt();
-        // This is not what I want (I think)
-        PyPlot {
-            y: vec![],
-            fmt: LineFMT::parse_fmt(format),
-            kwargs: HashMap::new(),
-        }
+    pub fn fmt(&mut self, linespec: String) {
+        self.format = LineFMT::parse_fmt(linespec);
     }
 
     pub fn plot(&self, y: &[T], label: String) {
