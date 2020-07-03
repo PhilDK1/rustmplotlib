@@ -239,7 +239,7 @@ pub struct PyPlot<T> {
     // as api reference
     y: Vec<T>,
     format: LineFMT,
-    kwargs: HashMap<String, String>
+    kwargs: HashMap<String, Option<T>>
 
 }
 
