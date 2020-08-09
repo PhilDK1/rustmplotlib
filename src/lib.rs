@@ -1,6 +1,11 @@
 #![allow(unused)]
 use pyo3::prelude::*;
 use std::collections::HashMap;
+use pyo3::types::*;
+
+mod plot;
+
+pub use plot::*;
 
 // two test functions
 pub fn builtins_sum(vec:Vec<i32>) -> PyResult<i32> {
@@ -19,7 +24,7 @@ pub fn numpy_sum(vec: Vec<i32>) -> PyResult<i32> {
     let total: i32 = np.call1("sum", (vec,))?.extract()?;
     Ok(total)
 }
-
+/*
 enum Marker {
     // acceptable arguments for fmt marker refer to api in PyPlot struct
     Point,
@@ -110,6 +115,8 @@ impl Marker {
     }
 }
 
+
+
 enum LineStyle {
     // acceptable arguments for fmt line refer to api in PyPlot struct
     SolidLine,
@@ -195,7 +202,6 @@ impl Colors {
     }
 }
 
-
 struct LineFMT{
     marker: Option<Marker>,
     linestyle: Option<LineStyle>,
@@ -232,26 +238,22 @@ impl LineFMT {
         format!("{}{}{}", mark, line, col).chars().filter(|c| !c.is_whitespace()).collect()
     }
 }
+*/
 
-pub struct PyPlot<T> {
-    // struct based on python3 matplotlib pyploy.plot command 
-    // using https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.pyplot.plot.html
-    // as api reference
-    y: Vec<T>,
-    format: LineFMT,
-    kwargs: HashMap<String, Option<T>>
 
-}
-
+/*
 impl<T: std::clone::Clone> PyPlot<T> {
-    pub fn new(y_points: &[T]) -> PyPlot<T> {
+    pub fn new(y_points: &[T], label: String) -> PyPlot<T> {
         let mut vec = Vec::new();
-       
         vec.extend_from_slice((y_points).clone());
+        let mut plots = HashMap::new();
+        plots.insert(label, vec);
+        // vec.extend_from_slice((y_points).clone());
         let mut commands = HashMap::new();
 
         PyPlot {
-            y: vec,
+            y: plots,
+            x: None,
             format: LineFMT {
                 marker: None,
                 linestyle: None,
@@ -261,11 +263,70 @@ impl<T: std::clone::Clone> PyPlot<T> {
         }
     }
 
+    pub fn add_axis(&mut self, x_axis: &[T]) {
+        let mut vec = Vec::new();
+        vec.extend_from_slice((x_axis).clone());
+        self.x = Some(vec);
+    }
+
     pub fn fmt(&mut self, linespec: String) {
         self.format = LineFMT::parse_fmt(linespec);
     }
 
-    pub fn plot(&self, y: &[T], label: String) {
 
+
+    pub fn plot(&self) -> PyResult<()>{
+        let gil = Python::acquire_gil();
+        let py = gil.python();
+        let mut container: Vec<Vec<T>> = Vec::new();
+        for val in self.y.values() {
+            container.push(val.to_vec());
+        }
+        let plt = PyModule::import(py, "matplotlib.pyplot")?;
+        let plot = plt.call1("plot", (vec![0,1,2,3,4,5,6,7,8,9,],));
+        let show = plt.call0("show");
+        Ok(())
     }
+
 }
+*/
+
+
+
+// pub fn plot2d(x: Vec<f64>, y: Vec<(Vec<f64>, &str, Option<PyDict>)>) -> PyResult<()> {
+//     let gil = Python::acquire_gil();
+//     let py = gil.python();
+//     let mpl = PyModule::import(py, "matplotlib.pyplot")?;
+
+//     for i in y.iter() {
+//         let (vec, col, sd) = i;
+//         let args1 = (x[..].to_owned(), vec[..].to_owned(), *col,);
+        
+//         mpl.call("plot",args1, sd.as_ref()).map_err(|e| {
+//             e.print_and_set_sys_last_vars(py);
+//         }).expect("Python Error");
+//     }
+
+//     mpl.call0("show").map_err(|e| {
+//         e.print_and_set_sys_last_vars(py);
+//     }).expect("Python Error");
+
+//     Ok(())
+// }
+
+// macro_rules! kwargs {
+    
+    
+//     ($($kw:expr => $arg:expr),*) => {
+//         let mut hm = HashMap::new();
+//         $(hm.insert($kw, $arg);)*
+//         hm
+//     };
+// }
+
+// macro_rules! to_kwargs {
+//     ($py:expr, $hm:expr) => {
+//         let dict = vec![].to_py_dict($py);
+
+//     };
+// }
