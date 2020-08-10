@@ -44,6 +44,12 @@ impl<'p> PyPlot<'p> {
         }).expect("Python Error");
     }
 
+    pub fn scatter(&self, x: &[f64], y: &[f64]) {
+        self.plt.call("scatter", (x.to_owned(), y.to_owned()), None).map_err(|e| {
+            e.print_and_set_sys_last_vars(self.py);
+        }).expect("Python Error");
+    }
+
     pub fn show(self) -> PyResult<()>{
         self.plt.call0("show").map_err(|e| {
             e.print_and_set_sys_last_vars(self.py);
