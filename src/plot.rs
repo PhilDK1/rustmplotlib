@@ -3,6 +3,10 @@ use pyo3::prelude::*;
 use std::collections::HashMap;
 use pyo3::types::*;
 
+pub struct Env {
+    gil: GILGuard
+}
+
 pub struct PyPlot<'p> {
     // struct based on python3 matplotlib pyploy.plot command 
     // using https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.pyplot.plot.html
@@ -15,9 +19,6 @@ pub struct PyPlot<'p> {
     plt: &'p PyModule,
 }
 
-pub struct Env {
-    gil: GILGuard
-}
 
 impl Env {
     pub fn new() -> Env {
@@ -39,7 +40,7 @@ impl<'p> PyPlot<'p> {
     }
 
     pub fn plot(&self, x: &[f64], y: &[f64]) {
-        self.plt.call("plot", (x.to_owned(), y.to_owned()), /*sd.as_ref()*/ None).map_err(|e| {
+        self.plt.call("plot", (x.to_owned(), y.to_owned()), None).map_err(|e| {
             e.print_and_set_sys_last_vars(self.py);
         }).expect("Python Error");
     }
