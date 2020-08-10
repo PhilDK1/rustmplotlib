@@ -1,11 +1,8 @@
-#![allow(unused)]
-use pyo3::prelude::*;
-use std::collections::HashMap;
-use pyo3::types::*;
+mod pyplot;
 
-mod plot;
 
-pub use plot::*;
+// re-exports
+pub use pyplot::*;
 
 /*
 enum Marker {
