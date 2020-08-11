@@ -5,7 +5,7 @@ use pyo3::types::*;
 use crate::figax::axes;
 use crate::common::Env;
 
-// lifetimes will probably have to be annotated at a later stage
+// lifetimes will probably have to be annotated at a later
 
 
 #[derive(Debug, Default)]
