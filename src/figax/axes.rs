@@ -7,7 +7,8 @@ use crate::common::Env;
 // lifetimes will probably have to be annotated at a later stage
 
 // #[derive(Debug, Default)]
-pub struct Axes<'a, T> {
+pub struct Axes<'a, T: pyo3::conversion::ToPyObject> {
+    py: &'a Python<'a>,
     plot_data: Option<PlotData<'a, T>>,
     title: Option<String>, // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.set_title.html#matplotlib-axes-axes-set-title
     xlabel: Option<String>, //https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.set_xlabel.html#matplotlib.axes.Axes.set_xlabel
@@ -15,9 +16,10 @@ pub struct Axes<'a, T> {
 
 }
 
-impl<'a, T> Axes<'a, T> {
-    pub fn empty() -> Axes<'a, T> {
+impl<'a, T: pyo3::conversion::ToPyObject> Axes<'a, T> {
+    pub fn empty(py: &'a Python) -> Axes<'a, T> {
         Axes::<T> {
+            py: py,
             plot_data: None,
             title: None,
             xlabel: None,
@@ -65,39 +67,95 @@ impl<'a, T> Axes<'a, T> {
         } 
     }
 
-    pub fn empty_scatter(&mut self) {
-        let scatter_plot: PlotData<'_, T> = PlotData::Scatter(Scatter::new());
+    pub fn scatter(&mut self, x: &'a [T], y: &'a [T]) {
+        let scatter_plot: PlotData<'_, T> = PlotData::Scatter(Scatter::new(self.py, x, y));
         self.plot_data = Some(scatter_plot);
     }
+
+    pub fn set_xdata(&mut self, x_data: &'a [T]) {
+        match &mut self.plot_data {
+            Some(PlotData::Scatter(scatter_plot)) => scatter_plot.set_xdata(x_data),
+            _ => println!("Not implimented yet."),
+        }
+    }
+
+    pub fn set_ydata(&mut self, y_data: &'a [T]) {
+        match &mut self.plot_data {
+            Some(PlotData::Scatter(scatter_plot)) => scatter_plot.set_ydata(y_data),
+            _ => println!("Not implimented yet."),
+        }
+    }
+
+    pub fn identify(&self) -> String {
+        let ans = match &self.plot_data {
+            Some(PlotData::Scatter(scatter_plot)) => "scatter".to_owned(),
+            Some(PlotData::Plot(plot)) => "plot".to_owned(),
+            None => "No known plot specified".to_owned(),
+        };
+        ans
+    }
+
+    // pub fn get_pyargs(&self) -> PyTuple {
+
+    // }
 }
 
 // #[derive(Debug)]
-enum PlotData<'a, T> {
+enum PlotData<'a, T: pyo3::conversion::ToPyObject> {
     // https://matplotlib.org/3.2.2/api/axes_api.html#plotting
     Scatter(Scatter<'a, T>),
     Plot(Plot),
 }
 
-#[derive(Debug, Default)]
-pub struct Scatter<'a, T> {
+impl<'a, T: pyo3::conversion::ToPyObject> PlotData<'a, T> {
+    pub fn identify(&self) -> String {
+        match self {
+            PlotData::Scatter(scatter_plot) => "scatter".to_owned(),
+            PlotData::Plot(plot) => "plot".to_owned(),
+        }
+    }
+}
+
+// #[derive(Debug, Default)]
+pub struct Scatter<'a, T: pyo3::conversion::ToPyObject> {
     // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.scatter.html#matplotlib.axes.Axes.scatter
-    x_data: Option<&'a [T]>,
-    y_data: Option<&'a [T]>,
+    py: &'a Python<'a>, 
+    x_data: &'a [T],
+    y_data: &'a [T],
 
 }
 
-impl<'a, T> Scatter<'a, T> {
-    pub fn new() -> Scatter<'a, T> {
-        Scatter::empty()
-    }
-
-    fn empty()-> Scatter<'a, T> {
+impl<'a, T: pyo3::conversion::ToPyObject> Scatter<'a, T> {
+    pub fn new(py: &'a Python, x: &'a [T], y: &'a [T]) -> Scatter<'a, T> {
+        // Scatter::empty(py)
         Scatter {
-            x_data: None,
-            y_data: None,
+            py: py,
+            x_data: &x,
+            y_data: &y,
         }
     }
 
+    // fn empty(py: &'a Python)-> Scatter<'a, T> {
+    //     let vec_x: Vec<T> = Vec::new();
+    //     let vec_y: Vec<T> = Vec::new();
+        // Scatter {
+        //     py: py,
+        //     x_data: &vec_x,
+        //     y_data: &vec_y,
+        // }
+    // }
+
+    fn set_xdata(&mut self, x_data: &'a [T]) {
+        self.x_data = x_data;
+    }
+
+    fn set_ydata(&mut self, y_data: &'a [T]) {
+        self.x_data = y_data;
+    }
+
+    fn get_pyargs(&self) -> &PyTuple {
+        PyTuple::new(*self.py, vec![self.x_data.to_owned(), self.y_data.to_owned()].into_iter())
+    }
 }
 
 
