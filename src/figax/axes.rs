@@ -6,7 +6,6 @@ use crate::common::Env;
 
 // lifetimes will probably have to be annotated at a later stage
 
-// #[derive(Debug, Default)]
 pub struct Axes<'a, T: pyo3::conversion::ToPyObject> {
     py: &'a Python<'a>,
     plot_data: Option<PlotData<'a, T>>,
@@ -127,23 +126,12 @@ pub struct Scatter<'a, T: pyo3::conversion::ToPyObject> {
 
 impl<'a, T: pyo3::conversion::ToPyObject> Scatter<'a, T> {
     pub fn new(py: &'a Python, x: &'a [T], y: &'a [T]) -> Scatter<'a, T> {
-        // Scatter::empty(py)
         Scatter {
             py: py,
             x_data: &x,
             y_data: &y,
         }
     }
-
-    // fn empty(py: &'a Python)-> Scatter<'a, T> {
-    //     let vec_x: Vec<T> = Vec::new();
-    //     let vec_y: Vec<T> = Vec::new();
-        // Scatter {
-        //     py: py,
-        //     x_data: &vec_x,
-        //     y_data: &vec_y,
-        // }
-    // }
 
     fn set_xdata(&mut self, x_data: &'a [T]) {
         self.x_data = x_data;

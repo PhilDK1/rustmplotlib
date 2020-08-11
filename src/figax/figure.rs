@@ -7,7 +7,6 @@ use crate::figax::axes;
 use crate::common::Env;
 
 
-// #[derive( Default)]
 pub struct Figure<'p, T: pyo3::conversion::ToPyObject> {
     py: Python<'p>,
     plt: &'p PyModule,
@@ -27,28 +26,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
     }
 
     pub fn add_empty_subplot(&'p mut self) -> &mut axes::Axes<'p, T> {
-        // place holder function
-        // let mut ax = match &mut self.subplots {
-        //     None => {
-        //         let mut set_of_subplots = Subplots::initialise(&self.py);
-        //         let ax = set_of_subplots.add_empty_subplot();
-        //         self.subplots = Some(set_of_subplots);
-        //         // set_of_subplots.add_empty_subplot()
-        //         ax
-        //     },
-        //     Some(set_of_subplots) => {
-        //         set_of_subplots.add_empty_subplot()
-        //     }
-        // };
-        // ax
-
-        // if self.subplots == None {
-        //     self.subplots = Some(Subplots::initialise(self.py))
-        // } else {
-        //     let Some(set_of_subplots) = self.subplots;
-
-        //     // self.subplots.add_empty_subplot()
-        // }
+        
         self.subplots.add_empty_subplot()
     }
 
@@ -57,23 +35,6 @@ impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
         self.plt.call0("figure").map_err(|e| {
             e.print_and_set_sys_last_vars(self.subplots.py);
         }).expect("Python Error");
-
-        // let set_of_subplots = match &self.subplots {
-        //     None => {
-        //         let set_of_subplots = Subplots::initialise(&self.py);
-        //         self.subplots = Some(set_of_subplots);
-        //         let set_of_subplots = match &self.subplots {
-        //             Some(set_of_subplots) => {
-        //                 set_of_subplots
-        //             },
-        //             None => unreachable!(),
-        //         };
-        //         set_of_subplots
-        //     },
-        //     Some(set_of_subplots) => {
-        //         set_of_subplots
-        //     }
-        // };
 
         for axis in &self.subplots.axes {
             self.plt.call0("axes").map_err(|e| {
@@ -86,7 +47,6 @@ impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
     }
 }
 
-// #[derive(Debug, Default)]
 struct Subplots<'p, T: pyo3::conversion::ToPyObject> {
     py: Python<'p> ,
     axes: Vec<axes::Axes<'p, T>>,
