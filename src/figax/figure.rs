@@ -52,7 +52,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
         self.subplots.add_empty_subplot()
     }
 
-    pub fn show(&'p mut self) {
+    pub fn show(&self) {
         //place holder function for the chain to pass to python
         self.plt.call0("figure").map_err(|e| {
             e.print_and_set_sys_last_vars(self.subplots.py);
