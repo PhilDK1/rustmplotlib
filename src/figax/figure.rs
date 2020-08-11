@@ -5,17 +5,21 @@ use pyo3::types::*;
 use crate::figax::axes;
 use crate::common::Env;
 
-// lifetimes will probably have to be annotated at a later
 
-
-#[derive(Debug, Default)]
-pub struct Figure {
+// #[derive( Default)]
+pub struct Figure<'p> {
+    py: Python<'p>,
+    plt: &'p PyModule,
     subplots: Subplots,
 }
 
-impl Figure {
-    pub fn new() -> Figure { 
-        Figure{
+impl<'p> Figure<'p> {
+    pub fn new<'a: 'p>(env: &'a Env) -> Figure<'p> { 
+        let python = env.gil.python();
+        let plot = python.import("matplotlib.pyplot").unwrap();
+        Figure {
+            py: python,
+            plt: plot,
             subplots: Subplots::initialise()
         }
     }
