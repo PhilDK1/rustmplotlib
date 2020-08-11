@@ -2,10 +2,8 @@
 use pyo3::prelude::*;
 use std::collections::HashMap;
 use pyo3::types::*;
+use crate::common::Env;
 
-pub struct Env {
-    gil: GILGuard
-}
 
 pub struct PyPlot<'p> {
     // struct based on python3 matplotlib pyploy.plot command 
@@ -17,15 +15,6 @@ pub struct PyPlot<'p> {
     // kwargs: HashMap<String, Option<T>>
     py: Python<'p>,
     plt: &'p PyModule,
-}
-
-
-impl Env {
-    pub fn new() -> Env {
-        Env {
-            gil: Python::acquire_gil(),
-        }
-    }
 }
 
 
