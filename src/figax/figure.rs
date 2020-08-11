@@ -11,32 +11,36 @@ use crate::common::Env;
 pub struct Figure<'p, T: pyo3::conversion::ToPyObject> {
     py: Python<'p>,
     plt: &'p PyModule,
-    subplots: Option<Subplots<'p, T>>,
+    subplots: Subplots<'p, T>,
 }
 
 impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
     pub fn new<'a: 'p>(env: &'a Env) -> Figure<'p, T> { 
         let python = env.gil.python();
         let plot = python.import("matplotlib.pyplot").unwrap();
+        let set_of_subplots = Subplots::initialise(env);
         Figure {
             py: python,
             plt: plot,
-            subplots: None,
+            subplots: set_of_subplots,
         }
     }
 
     pub fn add_empty_subplot(&'p mut self) -> &mut axes::Axes<'p, T> {
         // place holder function
-        match self.subplots {
-            None => {
-                let set_of_subplots = Subplots::initialise(&self.py);
-                self.subplots = Some(set_of_subplots);
-                set_of_subplots.add_empty_subplot()
-            },
-            Some(set_of_subplots) => {
-                set_of_subplots.add_empty_subplot()
-            }
-        }
+        // let mut ax = match &mut self.subplots {
+        //     None => {
+        //         let mut set_of_subplots = Subplots::initialise(&self.py);
+        //         let ax = set_of_subplots.add_empty_subplot();
+        //         self.subplots = Some(set_of_subplots);
+        //         // set_of_subplots.add_empty_subplot()
+        //         ax
+        //     },
+        //     Some(set_of_subplots) => {
+        //         set_of_subplots.add_empty_subplot()
+        //     }
+        // };
+        // ax
 
         // if self.subplots == None {
         //     self.subplots = Some(Subplots::initialise(self.py))
@@ -45,34 +49,35 @@ impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
 
         //     // self.subplots.add_empty_subplot()
         // }
+        self.subplots.add_empty_subplot()
     }
 
     pub fn show(&'p mut self) {
         //place holder function for the chain to pass to python
         self.plt.call0("figure").map_err(|e| {
-            e.print_and_set_sys_last_vars(self.py);
+            e.print_and_set_sys_last_vars(self.subplots.py);
         }).expect("Python Error");
-        
-        let set_of_subplots = match &self.subplots {
-            None => {
-                let set_of_subplots = Subplots::initialise(&self.py);
-                self.subplots = Some(set_of_subplots);
-                let set_of_subplots = match &self.subplots {
-                    Some(set_of_subplots) => {
-                        set_of_subplots
-                    },
-                    None => unreachable!(),
-                };
-                set_of_subplots
-            },
-            Some(set_of_subplots) => {
-                set_of_subplots
-            }
-        };
 
-        for axis in &set_of_subplots.axes {
+        // let set_of_subplots = match &self.subplots {
+        //     None => {
+        //         let set_of_subplots = Subplots::initialise(&self.py);
+        //         self.subplots = Some(set_of_subplots);
+        //         let set_of_subplots = match &self.subplots {
+        //             Some(set_of_subplots) => {
+        //                 set_of_subplots
+        //             },
+        //             None => unreachable!(),
+        //         };
+        //         set_of_subplots
+        //     },
+        //     Some(set_of_subplots) => {
+        //         set_of_subplots
+        //     }
+        // };
+
+        for axis in &self.subplots.axes {
             self.plt.call0("axes").map_err(|e| {
-                e.print_and_set_sys_last_vars(self.py);
+                e.print_and_set_sys_last_vars(self.subplots.py);
             }).expect("Python Error");
 
             let ax_type = &axis.identify();
@@ -83,21 +88,22 @@ impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
 
 // #[derive(Debug, Default)]
 struct Subplots<'p, T: pyo3::conversion::ToPyObject> {
-    py: &'p Python<'p>,
+    py: Python<'p> ,
     axes: Vec<axes::Axes<'p, T>>,
 }
 
 impl<'p, T: pyo3::conversion::ToPyObject> Subplots<'p, T> {
-    pub fn initialise(py: &'p Python) -> Subplots<'p, T> {
+    pub fn initialise<'a: 'p>(env: &'a Env) -> Subplots<'p, T> {
+        let python = env.gil.python();
         Subplots {
-            py: py,
+            py: python,
             axes: vec![],
         }
     }
 
     pub fn add_empty_subplot(&'p mut self) -> &'p mut axes::Axes<'p, T> {
         //place holder function
-        let mut new_axes = axes::Axes::empty(self.py);
+        let mut new_axes = axes::Axes::empty(&self.py);
         let previous_len = self.num_axes();
         self.axes.push(new_axes);
 
@@ -110,7 +116,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Subplots<'p, T> {
 
     pub fn add_subplot(&'p mut self) -> &'p mut axes::Axes<'p, T> {
         
-        let mut new_axes = axes::Axes::empty(self.py);
+        let mut new_axes = axes::Axes::empty(&self.py);
         let previous_len = self.num_axes();
         self.axes.push(new_axes);
 
