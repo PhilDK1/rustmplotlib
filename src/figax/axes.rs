@@ -64,6 +64,11 @@ impl<'a, T> Axes<'a, T> {
             None => Err("No ylabel set, try: Axis.set_ylabel(ylabel: &str)"),
         } 
     }
+
+    pub fn empty_scatter(&mut self) {
+        let scatter_plot: PlotData<'_, T> = PlotData::Scatter(Scatter::new());
+        self.plot_data = Some(scatter_plot);
+    }
 }
 
 // #[derive(Debug)]
@@ -73,13 +78,28 @@ enum PlotData<'a, T> {
     Plot(Plot),
 }
 
-// #[derive(Debug, Default)]
+#[derive(Debug, Default)]
 pub struct Scatter<'a, T> {
     // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.scatter.html#matplotlib.axes.Axes.scatter
-    x_data: &'a [T],
-    y_data: &'a [T],
+    x_data: Option<&'a [T]>,
+    y_data: Option<&'a [T]>,
 
 }
+
+impl<'a, T> Scatter<'a, T> {
+    pub fn new() -> Scatter<'a, T> {
+        Scatter::empty()
+    }
+
+    fn empty()-> Scatter<'a, T> {
+        Scatter {
+            x_data: None,
+            y_data: None,
+        }
+    }
+
+}
+
 
 #[derive(Debug, Default)]
 pub struct Plot {
