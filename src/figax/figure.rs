@@ -58,4 +58,13 @@ impl<'p, T> Subplots<'p, T> {
     fn num_axes(&self) -> usize {
         self.axes.len()
     }
+
+    pub fn add_subplot(&'p mut self) -> &'p mut axes::Axes<'p, T> {
+        
+        let mut new_axes = axes::Axes::empty();
+        let previous_len = self.num_axes();
+        self.axes.push(new_axes);
+
+        &mut self.axes[previous_len]
+    }
 }
