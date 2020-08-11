@@ -7,14 +7,14 @@ use crate::common::Env;
 
 
 // #[derive( Default)]
-pub struct Figure<'p> {
+pub struct Figure<'p, T> {
     py: Python<'p>,
     plt: &'p PyModule,
-    subplots: Subplots,
+    subplots: Subplots<'p, T>,
 }
 
-impl<'p> Figure<'p> {
-    pub fn new<'a: 'p>(env: &'a Env) -> Figure<'p> { 
+impl<'p, T> Figure<'p, T> {
+    pub fn new<'a: 'p>(env: &'a Env) -> Figure<'p, T> { 
         let python = env.gil.python();
         let plot = python.import("matplotlib.pyplot").unwrap();
         Figure {
@@ -24,7 +24,7 @@ impl<'p> Figure<'p> {
         }
     }
 
-    pub fn add_empty_subplot(&mut self) -> &mut axes::Axes{
+    pub fn add_empty_subplot(&'p mut self) -> &mut axes::Axes<'p, T> {
         // place holder function
         self.subplots.add_empty_subplot()
     }
@@ -34,19 +34,19 @@ impl<'p> Figure<'p> {
     }
 }
 
-#[derive(Debug, Default)]
-struct Subplots {
-    axes: Vec<axes::Axes>,
+// #[derive(Debug, Default)]
+struct Subplots<'p, T> {
+    axes: Vec<axes::Axes<'p, T>>,
 }
 
-impl Subplots{
-    pub fn initialise() -> Subplots {
+impl<'p, T> Subplots<'p, T> {
+    pub fn initialise() -> Subplots<'p, T> {
         Subplots {
             axes: vec![],
         }
     }
 
-    pub fn add_empty_subplot(&mut self) -> &mut axes::Axes{
+    pub fn add_empty_subplot(&'p mut self) -> &'p mut axes::Axes<'p, T> {
         //place holder function
         let mut new_axes = axes::Axes::empty();
         let previous_len = self.num_axes();
