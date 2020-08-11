@@ -1,6 +1,0 @@
-specified that generic T, impliment pyo3::conversion::ToPyObject
-for that had to have a ref to python in every struct down from Figure.
-
-scatter now has implimented get_pyargs so hence ^
-
-a lot of breaking changes
