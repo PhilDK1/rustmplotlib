@@ -46,8 +46,27 @@ impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
     //     }
     // }
 
-    pub fn add_subplot(self, new_axes: axes::Axes<'p, T>) {
-        self.subplots.add_subplot(new_axes);
+    pub fn show(self) {
+        self.plt.call0("figure").map_err(|e| {
+            e.print_and_set_sys_last_vars(self.py);
+        }).expect("Python Error");
+
+        for axis in self.subplots.axes {
+            let name = axis.identify();
+            let plotdata = axis.get_plot_data().unwrap();
+            let args = plotdata.get_pyargs(self.py);
+            self.plt.call(name.as_str(), args, None);
+        }
+
+        self.plt.call0("show");
+
+    }
+    
+
+
+    pub fn add_subplot(mut self, new_axes: axes::Axes<'p, T>) -> Self{
+        self.subplots = self.subplots.add_subplot(new_axes);
+        self
     }
 }
 
@@ -78,12 +97,12 @@ impl<'p, T: pyo3::conversion::ToPyObject> Subplots<'p, T> {
         self.axes.len()
     }
 
-    pub fn add_subplot(mut self, new_axes: axes::Axes<'p, T>) {
+    pub fn add_subplot(mut self, new_axes: axes::Axes<'p, T>)-> Self {
         
         // let mut new_axes = axes::Axes::empty(&self.);
         let previous_len = self.num_axes();
         self.axes.push(new_axes);
-
+        self
         // &mut self.axes[previous_len]
     }
 }
