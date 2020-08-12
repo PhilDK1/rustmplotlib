@@ -6,19 +6,20 @@ use crate::common::Env;
 
 // lifetimes will probably have to be annotated at a later stage
 
-pub struct Axes<'a, T: pyo3::conversion::ToPyObject> {
-    py: &'a Python<'a>,
-    plot_data: Option<PlotData<'a, T>>,
+pub struct Axes<'p, T: pyo3::conversion::ToPyObject> {
+    // py: Option<Python<'p>>,
+    plot_data: Option<PlotData<'p, T>>,
     title: Option<String>, // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.set_title.html#matplotlib-axes-axes-set-title
     xlabel: Option<String>, //https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.set_xlabel.html#matplotlib.axes.Axes.set_xlabel
     ylabel: Option<String>, //https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.set_ylabel.html#matplotlib.axes.Axes.set_ylabel
 
 }
 
-impl<'a, T: pyo3::conversion::ToPyObject> Axes<'a, T> {
-    pub fn empty(py: &'a Python) -> Axes<'a, T> {
+impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
+    pub fn empty() -> Axes<'p, T> {
+        // let python = env.gil.python();
         Axes::<T> {
-            py: py,
+            // py: Option::<&python>,
             plot_data: None,
             title: None,
             xlabel: None,
@@ -66,19 +67,20 @@ impl<'a, T: pyo3::conversion::ToPyObject> Axes<'a, T> {
         } 
     }
 
-    pub fn scatter(&mut self, x: &'a [T], y: &'a [T]) {
-        let scatter_plot: PlotData<'_, T> = PlotData::Scatter(Scatter::new(self.py, x, y));
+    pub fn scatter(&mut self, x: &'p [T], y: &'p [T]) {
+        // let Some(python) = self.py;
+        let scatter_plot: PlotData<'p, T> = PlotData::Scatter(Scatter::new(x, y));
         self.plot_data = Some(scatter_plot);
     }
 
-    pub fn set_xdata(&mut self, x_data: &'a [T]) {
+    pub fn set_xdata(&mut self, x_data: &'p [T]) {
         match &mut self.plot_data {
             Some(PlotData::Scatter(scatter_plot)) => scatter_plot.set_xdata(x_data),
             _ => println!("Not implimented yet."),
         }
     }
 
-    pub fn set_ydata(&mut self, y_data: &'a [T]) {
+    pub fn set_ydata(&mut self, y_data: &'p [T]) {
         match &mut self.plot_data {
             Some(PlotData::Scatter(scatter_plot)) => scatter_plot.set_ydata(y_data),
             _ => println!("Not implimented yet."),
@@ -100,13 +102,13 @@ impl<'a, T: pyo3::conversion::ToPyObject> Axes<'a, T> {
 }
 
 // #[derive(Debug)]
-enum PlotData<'a, T: pyo3::conversion::ToPyObject> {
+enum PlotData<'p, T: pyo3::conversion::ToPyObject> {
     // https://matplotlib.org/3.2.2/api/axes_api.html#plotting
-    Scatter(Scatter<'a, T>),
+    Scatter(Scatter<'p, T>),
     Plot(Plot),
 }
 
-impl<'a, T: pyo3::conversion::ToPyObject> PlotData<'a, T> {
+impl<'p, T: pyo3::conversion::ToPyObject> PlotData<'p, T> {
     pub fn identify(&self) -> String {
         match self {
             PlotData::Scatter(scatter_plot) => "scatter".to_owned(),
@@ -116,34 +118,34 @@ impl<'a, T: pyo3::conversion::ToPyObject> PlotData<'a, T> {
 }
 
 // #[derive(Debug, Default)]
-pub struct Scatter<'a, T: pyo3::conversion::ToPyObject> {
+pub struct Scatter<'p, T: pyo3::conversion::ToPyObject> {
     // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.scatter.html#matplotlib.axes.Axes.scatter
-    py: &'a Python<'a>, 
-    x_data: &'a [T],
-    y_data: &'a [T],
+    // py: &'p Python<'p>, 
+    x_data: &'p [T],
+    y_data: &'p [T],
 
 }
 
-impl<'a, T: pyo3::conversion::ToPyObject> Scatter<'a, T> {
-    pub fn new(py: &'a Python, x: &'a [T], y: &'a [T]) -> Scatter<'a, T> {
+impl<'p, T: pyo3::conversion::ToPyObject> Scatter<'p, T> {
+    pub fn new(x: &'p [T], y: &'p [T]) -> Scatter<'p, T> {
         Scatter {
-            py: py,
+            // py: py,
             x_data: &x,
             y_data: &y,
         }
     }
 
-    fn set_xdata(&mut self, x_data: &'a [T]) {
+    fn set_xdata(&mut self, x_data: &'p [T]) {
         self.x_data = x_data;
     }
 
-    fn set_ydata(&mut self, y_data: &'a [T]) {
+    fn set_ydata(&mut self, y_data: &'p [T]) {
         self.x_data = y_data;
     }
 
-    fn get_pyargs(&self) -> &PyTuple {
-        PyTuple::new(*self.py, vec![self.x_data.to_owned(), self.y_data.to_owned()].into_iter())
-    }
+    // fn get_pyargs(&self) -> &PyTuple {
+    //     PyTuple::new(*self.py, vec![self.x_data.to_owned(), self.y_data.to_owned()].into_iter())
+    // }
 }
 
 
