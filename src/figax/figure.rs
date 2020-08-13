@@ -24,27 +24,6 @@ impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
         }
     }
 
-    // pub fn add_empty_subplot(&'p mut self) -> &mut axes::Axes<'p, T> {
-
-    //     self.subplots.add_empty_subplot()
-    // }
-
-    // pub fn show(&self) {
-    //     //place holder function for the chain to pass to python
-    //     self.plt.call0("figure").map_err(|e| {
-    //         e.print_and_set_sys_last_vars(self.subplots.py);
-    //     }).expect("Python Error");
-
-    //     for axis in &self.subplots.axes {
-    //         self.plt.call0("axes").map_err(|e| {
-    //             e.print_and_set_sys_last_vars(self.subplots.py);
-    //         }).expect("Python Error");
-
-    //         let ax_type = &axis.identify();
-    //         // self.plt.call(ax_type.to_str(), args: impl IntoPy<Py<PyTuple>>, kwargs: Option<&PyDict>)
-    //     }
-    // }
-
     pub fn specify_grid_layout(&mut self, nrow: usize, ncol: usize) {
         self.subplots.specify_grid_layout(nrow, ncol);
     }
@@ -72,7 +51,6 @@ impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
                     e.print_and_set_sys_last_vars(self.py);
                 })
                 .expect("Python Error");
-            // ind += 1;
 
             let s = t
                 .call_method(name.as_str(), args, None)
@@ -97,16 +75,13 @@ impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
 }
 
 struct Subplots<'p, T: pyo3::conversion::ToPyObject> {
-    // py: Python<'p> ,
     axes: Vec<axes::Axes<'p, T>>,
     grid_layout: Option<(usize, usize)>,
 }
 
 impl<'p, T: pyo3::conversion::ToPyObject> Subplots<'p, T> {
     pub fn initialise<'a: 'p>(env: &'a Env) -> Subplots<'p, T> {
-        // let python = env.gil.python();
         Subplots {
-            // py: python,
             axes: vec![],
             grid_layout: None,
         }
@@ -115,24 +90,15 @@ impl<'p, T: pyo3::conversion::ToPyObject> Subplots<'p, T> {
         self.grid_layout = Some((nrow, ncol));
     }
 
-    // pub fn add_empty_subplot(&'p mut self) -> &'p mut axes::Axes<'p, T> {
-    //     //place holder function
-    //     let mut new_axes = axes::Axes::empty(&self.py);
-    //     let previous_len = self.num_axes();
-    //     self.axes.push(new_axes);
 
-    //     &mut self.axes[previous_len]
-    // }
 
     fn num_axes(&self) -> usize {
         self.axes.len()
     }
 
     pub fn add_subplot(mut self, new_axes: axes::Axes<'p, T>) -> Self {
-        // let mut new_axes = axes::Axes::empty(&self.);
         let previous_len = self.num_axes();
         self.axes.push(new_axes);
         self
-        // &mut self.axes[previous_len]
     }
 }

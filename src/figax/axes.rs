@@ -7,7 +7,6 @@ use std::collections::HashMap;
 // lifetimes will probably have to be annotated at a later stage
 
 pub struct Axes<'p, T: pyo3::conversion::ToPyObject> {
-    // py: Option<Python<'p>>,
     plot_data: Option<PlotData<'p, T>>,
     title: Option<String>, // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.set_title.html#matplotlib-axes-axes-set-title
     xlabel: Option<String>, //https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.set_xlabel.html#matplotlib.axes.Axes.set_xlabel
@@ -17,9 +16,7 @@ pub struct Axes<'p, T: pyo3::conversion::ToPyObject> {
 
 impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
     pub fn empty() -> Axes<'p, T> {
-        // let python = env.gil.python();
         Axes::<T> {
-            // py: Option::<&python>,
             plot_data: None,
             title: None,
             xlabel: None,
@@ -86,7 +83,6 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
     }
 
     pub fn scatter(mut self, x: &'p [T], y: &'p [T]) -> Self {
-        // let Some(python) = self.py;
         let scatter_plot: PlotData<'p, T> = PlotData::Scatter(Scatter::new(x, y));
         self.plot_data = Some(scatter_plot);
         self
@@ -114,12 +110,8 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
         }
     }
 
-    // pub fn get_pyargs(&self) -> PyTuple {
-
-    // }
 }
 
-// #[derive(Debug)]
 pub enum PlotData<'p, T: pyo3::conversion::ToPyObject> {
     // https://matplotlib.org/3.2.2/api/axes_api.html#plotting
     Scatter(Scatter<'p, T>),
@@ -142,10 +134,8 @@ impl<'p, T: pyo3::conversion::ToPyObject> PlotData<'p, T> {
     }
 }
 
-// #[derive(Debug, Default)]
 pub struct Scatter<'p, T: pyo3::conversion::ToPyObject> {
     // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.scatter.html#matplotlib.axes.Axes.scatter
-    // py: &'p Python<'p>,
     x_data: &'p [T],
     y_data: &'p [T],
 }
@@ -153,7 +143,6 @@ pub struct Scatter<'p, T: pyo3::conversion::ToPyObject> {
 impl<'p, T: pyo3::conversion::ToPyObject> Scatter<'p, T> {
     pub fn new(x: &'p [T], y: &'p [T]) -> Scatter<'p, T> {
         Scatter {
-            // py: py,
             x_data: &x,
             y_data: &y,
         }
@@ -175,7 +164,6 @@ impl<'p, T: pyo3::conversion::ToPyObject> Scatter<'p, T> {
     }
 }
 
-// #[derive(Debug, Default)]
 // pub struct Plot {
 //     // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.plot.html#matplotlib-axes-axes-plot
 // }

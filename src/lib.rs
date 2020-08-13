@@ -1,11 +1,9 @@
 mod common;
 mod figax;
-mod pyplot;
 
 // re-exports
 pub use common::*;
 pub use figax::*;
-pub use pyplot::*;
 
 /*
 enum Marker {

@@ -1,7 +1,4 @@
-#![allow(unused)]
 use pyo3::prelude::*;
-use pyo3::types::*;
-use std::collections::HashMap;
 
 pub struct Env {
     pub gil: GILGuard,
