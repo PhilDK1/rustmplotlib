@@ -1,7 +1,6 @@
 use crate::common::Env;
 use crate::figax::axes;
 use pyo3::prelude::*;
-use pyo3::types::*;
 
 pub struct Figure<'p, T: pyo3::conversion::ToPyObject> {
     // Meant to represent matplotlib.figure.figure instance
@@ -76,8 +75,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
                 })
                 .expect("Python Error"); // expects expect
 
-            let plot_type = ax // actually saying the plot type (i.e. plt.scatter(), plt.plot, etc. )
-                .call_method(name.as_str(), args, None) // calling the method
+            ax.call_method(name.as_str(), args, None)  // actually saying the plot type (i.e. plt.scatter(), plt.plot, etc. )
                 .map_err(|e| {  // logging errors and printing
                     e.print_and_set_sys_last_vars(self.py);
                 })
@@ -107,7 +105,7 @@ struct Subplots<'p, T: pyo3::conversion::ToPyObject> {
 
 impl<'p, T: pyo3::conversion::ToPyObject> Subplots<'p, T> {
 
-    pub fn initialise<'a: 'p>() -> Subplots<'p, T> {
+    pub fn initialise() -> Subplots<'p, T> {
         // function to make an empty Subplots object
         Subplots {
             axes: vec![],
@@ -122,7 +120,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Subplots<'p, T> {
     }
 
 
-
+    #[allow(dead_code)]
     fn num_axes(&self) -> usize {
         // function to determine the number of plots in the figure
         self.axes.len()
@@ -130,7 +128,6 @@ impl<'p, T: pyo3::conversion::ToPyObject> Subplots<'p, T> {
 
     pub fn add_subplot(mut self, new_axes: axes::Axes<'p, T>) -> Self {
         // function to add an axes to the subplot struct and in turn to figure
-        let previous_len = self.num_axes();
         self.axes.push(new_axes);
         self
     }
