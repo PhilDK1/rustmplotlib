@@ -1,10 +1,7 @@
-#![allow(unused)]
 use crate::common::Env;
 use crate::figax::axes;
 use pyo3::prelude::*;
 use pyo3::types::*;
-use std::collections::HashMap;
-use std::unreachable;
 
 pub struct Figure<'p, T: pyo3::conversion::ToPyObject> {
     // Meant to represent matplotlib.figure.figure instance
@@ -23,7 +20,8 @@ impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
         // import matplotlib,pyplot
         let plot = python.import("matplotlib.pyplot").unwrap();
         
-        let set_of_subplots = Subplots::initialise(env);
+        // makes subplot
+        let set_of_subplots = Subplots::initialise();
         Figure {
             py: python,
             plt: plot,
@@ -109,7 +107,7 @@ struct Subplots<'p, T: pyo3::conversion::ToPyObject> {
 
 impl<'p, T: pyo3::conversion::ToPyObject> Subplots<'p, T> {
 
-    pub fn initialise<'a: 'p>(env: &'a Env) -> Subplots<'p, T> {
+    pub fn initialise<'a: 'p>() -> Subplots<'p, T> {
         // function to make an empty Subplots object
         Subplots {
             axes: vec![],
