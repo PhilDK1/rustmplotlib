@@ -6,7 +6,6 @@ use pyo3::types::*;
 /// will need to probably make a kwargs enum (separate file for readability) and have any kwargs stored
 /// as an Option<Kwargs> of a certain type within and make into a dict at a later point
 
-
 pub struct Axes<'p, T: pyo3::conversion::ToPyObject> {
     plot_data: Option<PlotData<'p, T>>,
     title: Option<String>, // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.set_title.html#matplotlib-axes-axes-set-title
@@ -78,7 +77,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
 
     pub fn get_ylabel(&self) -> Result<String, &'static str> {
         // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.get_xlabel.html#matplotlib.axes.Axes.get_xlabel
-        // gets the ylabel if specified, errors if not 
+        // gets the ylabel if specified, errors if not
         match &self.ylabel {
             Some(get_ylabel) => Ok(get_ylabel.to_string()),
             None => Err("No ylabel set, try: Axis.set_ylabel(ylabel: &str)"),
@@ -124,7 +123,6 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
             None => "No known plot specified".to_owned(), // this will completely mess up the call
         }
     }
-
 }
 
 pub enum PlotData<'p, T: pyo3::conversion::ToPyObject> {
