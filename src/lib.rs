@@ -1,11 +1,11 @@
-mod pyplot;
-mod figax;
 mod common;
+mod figax;
+mod pyplot;
 
 // re-exports
-pub use pyplot::*;
-pub use figax::*;
 pub use common::*;
+pub use figax::*;
+pub use pyplot::*;
 
 /*
 enum Marker {
@@ -163,7 +163,7 @@ impl Colors {
         };
         ans
     }
-    
+
 
     fn set(fmt: String) -> Option<Colors> {
         // setter method for use in LineFMT
@@ -223,7 +223,6 @@ impl LineFMT {
 }
 */
 
-
 /*
 impl<T: std::clone::Clone> PyPlot<T> {
     pub fn new(y_points: &[T], label: String) -> PyPlot<T> {
@@ -274,8 +273,6 @@ impl<T: std::clone::Clone> PyPlot<T> {
 }
 */
 
-
-
 // pub fn plot2d(x: Vec<f64>, y: Vec<(Vec<f64>, &str, Option<PyDict>)>) -> PyResult<()> {
 //     let gil = Python::acquire_gil();
 //     let py = gil.python();
@@ -284,7 +281,7 @@ impl<T: std::clone::Clone> PyPlot<T> {
 //     for i in y.iter() {
 //         let (vec, col, sd) = i;
 //         let args1 = (x[..].to_owned(), vec[..].to_owned(), *col,);
-        
+
 //         mpl.call("plot",args1, sd.as_ref()).map_err(|e| {
 //             e.print_and_set_sys_last_vars(py);
 //         }).expect("Python Error");
@@ -298,8 +295,7 @@ impl<T: std::clone::Clone> PyPlot<T> {
 // }
 
 // macro_rules! kwargs {
-    
-    
+
 //     ($($kw:expr => $arg:expr),*) => {
 //         let mut hm = HashMap::new();
 //         $(hm.insert($kw, $arg);)*

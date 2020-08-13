@@ -1,11 +1,10 @@
 #![allow(unused)]
 use pyo3::prelude::*;
-use std::collections::HashMap;
 use pyo3::types::*;
-
+use std::collections::HashMap;
 
 pub struct Env {
-    pub gil: GILGuard
+    pub gil: GILGuard,
 }
 
 impl Env {
@@ -13,5 +12,11 @@ impl Env {
         Env {
             gil: Python::acquire_gil(),
         }
+    }
+}
+
+impl Default for Env {
+    fn default() -> Self {
+        Self::new()
     }
 }

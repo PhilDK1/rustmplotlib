@@ -1,12 +1,11 @@
 #![allow(unused)]
-use pyo3::prelude::*;
-use std::collections::HashMap;
-use pyo3::types::*;
 use crate::common::Env;
-
+use pyo3::prelude::*;
+use pyo3::types::*;
+use std::collections::HashMap;
 
 pub struct PyPlot<'p> {
-    // struct based on python3 matplotlib pyploy.plot command 
+    // struct based on python3 matplotlib pyploy.plot command
     // using https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.pyplot.plot.html
     // as api reference
     // y: HashMap<String,Vec<T>>,
@@ -16,7 +15,6 @@ pub struct PyPlot<'p> {
     py: Python<'p>,
     plt: &'p PyModule,
 }
-
 
 impl<'p> PyPlot<'p> {
     pub fn new<'a: 'p>(env: &'a Env) -> PyPlot<'p> {
@@ -29,21 +27,30 @@ impl<'p> PyPlot<'p> {
     }
 
     pub fn plot(&self, x: &[f64], y: &[f64]) {
-        self.plt.call("plot", (x.to_owned(), y.to_owned()), None).map_err(|e| {
-            e.print_and_set_sys_last_vars(self.py);
-        }).expect("Python Error");
+        self.plt
+            .call("plot", (x.to_owned(), y.to_owned()), None)
+            .map_err(|e| {
+                e.print_and_set_sys_last_vars(self.py);
+            })
+            .expect("Python Error");
     }
 
     pub fn scatter(&self, x: &[f64], y: &[f64]) {
-        self.plt.call("scatter", (x.to_owned(), y.to_owned()), None).map_err(|e| {
-            e.print_and_set_sys_last_vars(self.py);
-        }).expect("Python Error");
+        self.plt
+            .call("scatter", (x.to_owned(), y.to_owned()), None)
+            .map_err(|e| {
+                e.print_and_set_sys_last_vars(self.py);
+            })
+            .expect("Python Error");
     }
 
-    pub fn show(self) -> PyResult<()>{
-        self.plt.call0("show").map_err(|e| {
-            e.print_and_set_sys_last_vars(self.py);
-        }).expect("Python Error");
+    pub fn show(self) -> PyResult<()> {
+        self.plt
+            .call0("show")
+            .map_err(|e| {
+                e.print_and_set_sys_last_vars(self.py);
+            })
+            .expect("Python Error");
 
         Ok(())
     }
