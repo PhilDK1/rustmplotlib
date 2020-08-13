@@ -46,19 +46,37 @@ impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
     //     }
     // }
 
+    pub fn specify_grid_layout(&mut self, nrow: usize, ncol: usize) {
+        self.subplots.specify_grid_layout(nrow, ncol);
+
+    }
+
     pub fn show(self) {
-        self.plt.call0("figure").map_err(|e| {
+        let f = self.plt.call_method0("figure").map_err(|e| {
             e.print_and_set_sys_last_vars(self.py);
         }).expect("Python Error");
-
-        for axis in self.subplots.axes {
+        let layout = match self.subplots.grid_layout {
+            Some(lay) => lay,
+            None => (1, 1), 
+        };
+        for axis in &self.subplots.axes {
             let name = axis.identify();
             let plotdata = axis.get_plot_data().unwrap();
             let args = plotdata.get_pyargs(self.py);
-            self.plt.call(name.as_str(), args, None);
+            let position: (usize, usize, usize) = (layout.0, layout.1, axis.get_index().unwrap());
+            let t = f.call_method1("add_subplot", position).map_err(|e| {
+                e.print_and_set_sys_last_vars(self.py);
+            }).expect("Python Error");
+            // ind += 1;
+            
+            let s = t.call_method(name.as_str(), args, None).map_err(|e| {
+                e.print_and_set_sys_last_vars(self.py);
+            }).expect("Python Error");
         }
 
-        self.plt.call0("show");
+        self.plt.call_method0("show").map_err(|e| {
+            e.print_and_set_sys_last_vars(self.py);
+        }).expect("Python Error");
 
     }
     
@@ -73,6 +91,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
 struct Subplots<'p, T: pyo3::conversion::ToPyObject> {
     // py: Python<'p> ,
     axes: Vec<axes::Axes<'p, T>>,
+    grid_layout: Option<(usize, usize)>
 }
 
 impl<'p, T: pyo3::conversion::ToPyObject> Subplots<'p, T> {
@@ -81,7 +100,11 @@ impl<'p, T: pyo3::conversion::ToPyObject> Subplots<'p, T> {
         Subplots {
             // py: python,
             axes: vec![],
+            grid_layout: None,
         }
+    }
+    pub fn specify_grid_layout(&mut self, nrow: usize, ncol: usize) {
+        self.grid_layout = Some((nrow, ncol));
     }
 
     // pub fn add_empty_subplot(&'p mut self) -> &'p mut axes::Axes<'p, T> {

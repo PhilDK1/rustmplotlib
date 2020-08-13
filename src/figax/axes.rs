@@ -12,6 +12,7 @@ pub struct Axes<'p, T: pyo3::conversion::ToPyObject> {
     title: Option<String>, // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.set_title.html#matplotlib-axes-axes-set-title
     xlabel: Option<String>, //https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.set_xlabel.html#matplotlib.axes.Axes.set_xlabel
     ylabel: Option<String>, //https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.set_ylabel.html#matplotlib.axes.Axes.set_ylabel
+    plot_index: Option<usize>,
 
 }
 
@@ -24,6 +25,18 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
             title: None,
             xlabel: None,
             ylabel: None,
+            plot_index: None,
+        }
+    }
+
+    pub fn set_index(&mut self, index: usize) {
+        self.plot_index = Some(index);
+    }
+
+    pub fn get_index(&self) -> Result<usize, &'static str> {
+        match &self.plot_index {
+            Some(ind) => Ok(*ind),
+            None => Err("No title set, try: Axis.set_title(title: &str)"),
         }
     }
 
@@ -74,10 +87,11 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
         }
     }
 
-    pub fn scatter(&mut self, x: &'p [T], y: &'p [T]) {
+    pub fn scatter(mut self, x: &'p [T], y: &'p [T]) -> Self{
         // let Some(python) = self.py;
         let scatter_plot: PlotData<'p, T> = PlotData::Scatter(Scatter::new(x, y));
         self.plot_data = Some(scatter_plot);
+        self
     }
 
     pub fn set_xdata(&mut self, x_data: &'p [T]) {
