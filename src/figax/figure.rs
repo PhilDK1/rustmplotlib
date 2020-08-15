@@ -28,6 +28,12 @@ impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
         }
     }
 
+    pub fn add_subplot(mut self, new_axes: axes::Axes<'p, T>) -> Self {
+        // adding subplots to figure and returning self
+        self.subplots = self.subplots.add_subplot(new_axes);
+        self
+    }
+
     pub fn specify_grid_layout(&mut self, nrow: usize, ncol: usize) {
         // does what it says on the tin really
         self.subplots.specify_grid_layout(nrow, ncol);
@@ -78,7 +84,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
 
             // (... the following line together)  // convert plot data to &PyTuple so it can be passed to call_method function below
             let args = plotdata.get_pyargs(self.py);
-            
+
             ax.call_method(name.as_str(), args, None) // actually saying the plot type (i.e. plt.scatter(), plt.plot, etc. )
                 .map_err(|e| {
                     // logging errors and printing
@@ -94,12 +100,6 @@ impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
                 e.print_and_set_sys_last_vars(self.py);
             })
             .expect("Python Error");
-    }
-
-    pub fn add_subplot(mut self, new_axes: axes::Axes<'p, T>) -> Self {
-        // adding subplots to figure and returning self
-        self.subplots = self.subplots.add_subplot(new_axes);
-        self
     }
 }
 
