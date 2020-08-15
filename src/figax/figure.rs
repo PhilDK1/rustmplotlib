@@ -65,7 +65,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
             // get plot type (i.e. plt.scatter(), plt.plot, etc. )
             let name = axis.identify();
 
-            
+            // gets arguements for 
             let axis_kwargs = axis.get_kwargs(self.py);
             // position on the grid made up of grid layout and the index at which it is stored
             let position: (usize, usize, usize) = (layout.0, layout.1, axis.get_index().unwrap());
@@ -83,9 +83,10 @@ impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
             let plotdata = axis.get_plot_data().unwrap();
 
             // (... the following line together)  // convert plot data to &PyTuple so it can be passed to call_method function below
-            let args = plotdata.get_pyargs(self.py);
+            let plot_args = plotdata.get_plotdata_pyargs(self.py);
+            let plot_kwargs = plotdata.get_plotdata_pykwargs(self.py);
 
-            ax.call_method(name.as_str(), args, None) // actually saying the plot type (i.e. plt.scatter(), plt.plot, etc. )
+            ax.call_method(name.as_str(), plot_args, Some(plot_kwargs)) // actually saying the plot type (i.e. plt.scatter(), plt.plot, etc. )
                 .map_err(|e| {
                     // logging errors and printing
                     e.print_and_set_sys_last_vars(self.py);

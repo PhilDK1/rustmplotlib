@@ -29,6 +29,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
 
     pub fn get_kwargs(&self, py: Python<'p>) -> &PyDict{
         let new_dict = PyDict::new(py);
+        // get methods not suitable as error's occur when Err variant is returned
         match &self.title {
             Some(title) => new_dict.set_item("title", title),
             None => new_dict.set_item("title", py.None()),
