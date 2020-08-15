@@ -29,9 +29,19 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
 
     pub fn get_kwargs(&self, py: Python<'p>) -> &PyDict{
         let new_dict = PyDict::new(py);
-        new_dict.set_item("title", self.get_title().unwrap());
-        new_dict.set_item("xlabel", self.get_xlabel().unwrap());
-        new_dict.set_item("ylabel", self.get_ylabel().unwrap());
+        match &self.title {
+            Some(title) => new_dict.set_item("title", title),
+            None => new_dict.set_item("title", py.None()),
+        };
+        match &self.xlabel {
+            Some(xlabel) => new_dict.set_item("xlabel", xlabel),
+            None => new_dict.set_item("xlabel", py.None()),
+        };
+
+        match &self.ylabel {
+            Some(ylabel) => new_dict.set_item("ylabel", ylabel),
+            None => new_dict.set_item("ylabel", py.None()),
+        };
         new_dict
     }
     
