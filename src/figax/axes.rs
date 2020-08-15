@@ -9,9 +9,9 @@ use pyo3::types::*;
 
 pub struct Axes<'p, T: pyo3::conversion::ToPyObject> {
     plot_data: Option<PlotData<'p, T>>,
-    // title: Option<String>, // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.set_title.html#matplotlib-axes-axes-set-title
-    // xlabel: Option<String>, //https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.set_xlabel.html#matplotlib.axes.Axes.set_xlabel
-    // ylabel: Option<String>, //https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.set_ylabel.html#matplotlib.axes.Axes.set_ylabel
+    title: Option<String>, // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.set_title.html#matplotlib-axes-axes-set-title
+    xlabel: Option<String>, //https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.set_xlabel.html#matplotlib.axes.Axes.set_xlabel
+    ylabel: Option<String>, //https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.set_ylabel.html#matplotlib.axes.Axes.set_ylabel
     plot_index: Option<usize>,
 }
 
@@ -20,11 +20,19 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
         // creates empty instance of Axes
         Axes::<T> {
             plot_data: None,
-            // title: None,
-            // xlabel: None,
-            // ylabel: None,
+            title: None,
+            xlabel: None,
+            ylabel: None,
             plot_index: None,
         }
+    }
+
+    pub fn get_kwargs(&self, py: Python<'p>) -> &PyDict{
+        let new_dict = PyDict::new(py);
+        new_dict.set_item("title", self.get_title().unwrap());
+        new_dict.set_item("xlabel", self.get_xlabel().unwrap());
+        new_dict.set_item("ylabel", self.get_ylabel().unwrap());
+        new_dict
     }
     
     pub fn set_index(&mut self, index: usize) {
@@ -39,7 +47,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
             None => Err("No index set, try: Axis.set_index(index: usize)"),
         }
     }
-    /*
+
     pub fn set_title(&mut self, title: &str) {
         // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.set_title.html#matplotlib-axes-axes-set-title
         // sets title
@@ -84,7 +92,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
             None => Err("No ylabel set, try: Axis.set_ylabel(ylabel: &str)"),
         }
     }
-    */
+
     pub fn get_plot_data(&self) -> Result<&PlotData<'p, T>, &'static str> {
         // gets the plotdata if specified else errors
         match &self.plot_data {
@@ -99,7 +107,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
         self.plot_data = Some(scatter_plot);
         self
     }
-    /*
+    
     pub fn set_xdata(&mut self, x_data: &'p [T]) {
         // sets the xdata of the plot type
         match &mut self.plot_data {
@@ -115,7 +123,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
             _ => println!("Not implimented yet."),
         }
     }
-*/
+
     pub fn identify(&self) -> String {
         // getst the type of plot and returns name of method call
         match &self.plot_data {

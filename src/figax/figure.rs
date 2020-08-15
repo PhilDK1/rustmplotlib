@@ -64,13 +64,13 @@ impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
 
             // (... the following line together)  // convert plot data to &PyTuple so it can be passed to call_method function below
             let args = plotdata.get_pyargs(self.py);
-
+            let kwargs = axis.get_kwargs(self.py);
             // position on the grid made up of grid layout and the index at which it is stored
             let position: (usize, usize, usize) = (layout.0, layout.1, axis.get_index().unwrap());
 
             // equivalent of calling figure.add_subplot(nrow, ncol, index)
             let ax = figure
-                .call_method1("add_subplot", position) // actually calling method
+                .call_method("add_subplot", position, Some(kwargs)) // actually calling method
                 .map_err(|e| {
                     // logging errors and printing
                     e.print_and_set_sys_last_vars(self.py);
