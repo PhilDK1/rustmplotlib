@@ -1,6 +1,7 @@
 #![allow(unused)]
 use crate::common::Env;
 use crate::figax::plots::*;
+use crate::addition_objs::colormap::Colormap;
 use pyo3::prelude::*;
 use pyo3::types::*;
 
@@ -134,7 +135,25 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
             _ => println!("Not implimented yet."),
         }
     }
+/*
+    pub fn set_marker(&mut self, marker: String) {
+        match &mut self.plot_data {
+            Some(PlotData::Scatter(scatter_plot)) => scatter_plot.set_marker(marker),
+            _ => println!("Not implimented yet"),
+        }
+    }
 
+    pub fn set_cmap(&mut self, name: String, N: Option<usize>) {
+        let quant = match N {
+            Some(uval) => uval,
+            None => 256 as usize,
+        };
+        let colormap = Colormap::new(name, quant);
+        match &mut self.plot_data {
+            Some(PlotData::Scatter(scatter_plot)) => scatter_plot.set_cmap(colormap),
+            _ => println!("Not implimented yet"),
+        }
+    }*/
     pub fn identify(&self) -> String {
         // getst the type of plot and returns name of method call
         match &self.plot_data {
