@@ -13,8 +13,8 @@ impl Colormap {
     }
 }
 
-// impl pyo3::conversion::ToPyObject for Colormap {
-//     fn to_object(&self, py: Python) -> PyObject {
+impl pyo3::conversion::ToPyObject for Colormap {
+    fn to_object(&self, py: Python) -> PyObject {
         
-//     }
-// }
+    }
+}

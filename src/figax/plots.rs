@@ -44,7 +44,7 @@ pub struct Scatter<'p, T: pyo3::conversion::ToPyObject> {
     y_data: &'p [T],
     // cannot use as they take a obj in python don't know how to convert yet:
     // marker_style: Option<String>,
-    // cmap: Option<Colormap>,
+    cmap: Option<Colormap>,
 }
 
 impl<'p, T: pyo3::conversion::ToPyObject> Scatter<'p, T> {
@@ -54,7 +54,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Scatter<'p, T> {
             x_data: &x,
             y_data: &y,
             // marker_style: None,
-            // cmap: None,
+            cmap: None,
         }
     }
 
@@ -79,11 +79,11 @@ impl<'p, T: pyo3::conversion::ToPyObject> Scatter<'p, T> {
     pub fn set_marker(&mut self, markerstyle: String) {
         self.marker_style = Some(markerstyle);
     }
-
+*/
     pub fn set_cmap(&mut self, cmap: Colormap) {
         self.cmap = Some(cmap);
     }
-
+/*
     fn get_plot_kwargs(&self, py: Python<'p>) -> &PyDict {
         let new_dict = PyDict::new(py);
         match &self.cmap {
