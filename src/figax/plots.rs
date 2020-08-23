@@ -3,14 +3,11 @@ use pyo3::types::*;
 // use crate::addition_objs::colormap::Colormap;
 use crate::plots::scatter::Scatter;
 
-
 pub enum PlotData<'p, T: pyo3::conversion::ToPyObject> {
     // https://matplotlib.org/3.2.2/api/axes_api.html#plotting
     Scatter(Scatter<'p, T>),
     // Plot(Plot),
 }
-
-
 
 impl<'p, T: pyo3::conversion::ToPyObject> PlotData<'p, T> {
     pub fn identify(&self) -> String {
@@ -32,7 +29,6 @@ impl<'p, T: pyo3::conversion::ToPyObject> PlotData<'p, T> {
     pub fn get_plotdata_pykwargs(&self, py: Python<'p>, mpl: &'p PyModule) -> &PyDict {
         match self {
             PlotData::Scatter(scatter_plot) => scatter_plot.get_plot_kwargs(py, mpl), //placeholder
-
         }
     }
 }

@@ -4,7 +4,6 @@ use crate::plots::scatter::*;
 use pyo3::prelude::*;
 use pyo3::types::*;
 
-
 /// will need to probably make a kwargs enum (separate file for readability) and have any kwargs stored
 /// as an Option<Kwargs> of a certain type within and make into a dict at a later point
 
@@ -28,26 +27,29 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
         }
     }
 
-    pub fn get_kwargs(&self, py: Python<'p>) -> &PyDict{
+    pub fn get_kwargs(&self, py: Python<'p>) -> &PyDict {
         let new_dict = PyDict::new(py);
         // get methods not suitable as error's occur when Err variant is returned
         match &self.title {
             Some(title) => new_dict.set_item("title", title),
             None => new_dict.set_item("title", py.None()),
-        }.expect("error in getting title");
+        }
+        .expect("error in getting title");
 
         match &self.xlabel {
             Some(xlabel) => new_dict.set_item("xlabel", xlabel),
             None => new_dict.set_item("xlabel", py.None()),
-        }.expect("error in getting xlabel");
+        }
+        .expect("error in getting xlabel");
 
         match &self.ylabel {
             Some(ylabel) => new_dict.set_item("ylabel", ylabel),
             None => new_dict.set_item("ylabel", py.None()),
-        }.expect("Error in getting ylabel");
+        }
+        .expect("Error in getting ylabel");
         new_dict
     }
-    
+
     pub fn set_index(&mut self, index: usize) {
         // specifies the index of this instance of the axis
         self.plot_index = Some(index);
@@ -120,7 +122,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
         self.plot_data = Some(scatter_plot);
         self
     }
-    
+
     pub fn set_xdata(&mut self, x_data: &'p [T]) {
         // sets the xdata of the plot type
         match &mut self.plot_data {
@@ -136,7 +138,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
             _ => println!("Not implimented yet."),
         }
     }
-/*
+    /*
     pub fn set_marker(&mut self, marker: String) {
         match &mut self.plot_data {
             Some(PlotData::Scatter(scatter_plot)) => scatter_plot.set_marker(marker),

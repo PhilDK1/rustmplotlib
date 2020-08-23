@@ -11,10 +11,7 @@ impl Colormap {
     pub fn new(name: String, quantization: Option<usize>) -> Colormap {
         Colormap {
             name,
-            n: quantization
+            n: quantization,
         }
     }
-
-    
 }
-

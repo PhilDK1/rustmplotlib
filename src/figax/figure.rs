@@ -65,7 +65,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
             // get plot type (i.e. plt.scatter(), plt.plot, etc. )
             let name = axis.identify();
 
-            // gets arguements for 
+            // gets arguements for
             let axis_kwargs = axis.get_kwargs(self.py);
             // position on the grid made up of grid layout and the index at which it is stored
             let position: (usize, usize, usize) = (layout.0, layout.1, axis.get_index().unwrap());
