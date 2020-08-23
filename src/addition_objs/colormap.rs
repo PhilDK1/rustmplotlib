@@ -18,11 +18,3 @@ impl Colormap {
     
 }
 
-// impl<'p> Colormap {
-//     fn to_pyand(&self, mpl: &'p PyModule, py: Python<'p>) -> &PyAny {
-//         mpl.call_method("colormap", (self.name, self.N), None).map_err(|e| {
-//             // reads pythons returned errors and prints them
-//             e.print_and_set_sys_last_vars(py);
-//         }).unwrap()
-//     }
-// }
