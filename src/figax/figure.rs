@@ -17,7 +17,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
         let python = env.gil.python();
 
         // import matplotlib,pyplot
-        let plot = python.import("matplotlib.pyplot").unwrap();
+        let plot = python.import("matplotlib" /*".pyplot"*/).unwrap();
 
         // makes subplot
         let set_of_subplots = Subplots::initialise();
@@ -45,7 +45,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
         // call plt.figure() and associate the returned object with figure variable
         let figure = self
             .plt
-            .call_method0("figure") // actaully calling plt.figure()
+            .call_method0("figure.Figure") // actaully calling plt.figure()
             .map_err(|e| {
                 // reads pythons returned errors and prints them
                 e.print_and_set_sys_last_vars(self.py);
@@ -84,7 +84,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
 
             // (... the following line together)  // convert plot data to &PyTuple so it can be passed to call_method function below
             let plot_args = plotdata.get_plotdata_pyargs(self.py);
-            let plot_kwargs = plotdata.get_plotdata_pykwargs(self.py);
+            let plot_kwargs = plotdata.get_plotdata_pykwargs(self.py, self.plt);
 
             ax.call_method(name.as_str(), plot_args, Some(plot_kwargs)) // actually saying the plot type (i.e. plt.scatter(), plt.plot, etc. )
                 .map_err(|e| {

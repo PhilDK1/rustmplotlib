@@ -1,7 +1,7 @@
 #![allow(unused)]
 use crate::common::Env;
 use crate::figax::plots::*;
-use crate::addition_objs::colormap::Colormap;
+// use crate::addition_objs::colormap::Colormap;
 use pyo3::prelude::*;
 use pyo3::types::*;
 

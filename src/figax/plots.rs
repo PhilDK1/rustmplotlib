@@ -28,9 +28,9 @@ impl<'p, T: pyo3::conversion::ToPyObject> PlotData<'p, T> {
         }
     }
 
-    pub fn get_plotdata_pykwargs(&self, py: Python<'p>) -> &PyDict {
+    pub fn get_plotdata_pykwargs(&self, py: Python<'p>, mpl: &'p PyModule) -> &PyDict {
         match self {
-            PlotData::Scatter(scatter_plot) => /*scatter_plot.get_plot_kwargs(py)*/ PyDict::new(py), //placeholder
+            PlotData::Scatter(scatter_plot) => scatter_plot.get_plot_kwargs(py, mpl) /*PyDict::new(py)*/, //placeholder
 
         }
     }
@@ -79,26 +79,35 @@ impl<'p, T: pyo3::conversion::ToPyObject> Scatter<'p, T> {
     pub fn set_marker(&mut self, markerstyle: String) {
         self.marker_style = Some(markerstyle);
     }
-*/
+
     pub fn set_cmap(&mut self, cmap: Colormap) {
         self.cmap = Some(cmap);
     }
-/*
-    fn get_plot_kwargs(&self, py: Python<'p>) -> &PyDict {
+*/
+    fn get_plot_kwargs(&self, py: Python<'p>, mpl: &'p PyModule) -> &PyDict {
         let new_dict = PyDict::new(py);
         match &self.cmap {
-            Some(colormap) => 
-            new_dict.set_item("cmap", ),
+            Some(colormap) => {
+                let options = PyDict::new(py);
+                match colormap.n {
+                    Some(num) => options.set_item("N", num),
+                    None => options.set_item("N", 256),
+                };
+                
+                
+                let cmap = mpl.call_method("colors.Colormap", (colormap.name.to_string(),), Some(options)).unwrap();
+                new_dict.set_item("cmap", cmap)
+            },
             None =>new_dict.set_item("cmap", py.None()),
         };
 
 
-        match &self.marker_style {
-            Some(marker) => new_dict.set_item("marker", marker),
-            None => new_dict.set_item("marker", py.None()),
-        };
+        // match &self.marker_style {
+        //     Some(marker) => new_dict.set_item("marker", marker),
+        //     None => new_dict.set_item("marker", py.None()),
+        // };
         new_dict
-    }*/
+    }
 }
 
 // pub struct Plot {
