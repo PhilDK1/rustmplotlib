@@ -52,33 +52,46 @@ impl<'p, T: pyo3::conversion::ToPyObject> Scatter<'p, T> {
         let new_dict = PyDict::new(py);
 
         match &self.cmap {
+
             Some(colormap) => {
                 let options = PyDict::new(py);
+
                 match colormap.n {
                     Some(num) => options.set_item("N", num),
                     None => options.set_item("N", 256),
                 }.expect("Err of some kind in default vals of src/figax/plots.rs:: Scatter.get_plot_kwargs()");
+
                 let cmap = mpl.call_method("colors.Colormap", (colormap.name.to_string(),), Some(options)).unwrap();
                 new_dict.set_item("cmap", cmap)
+
             },
+
             None =>new_dict.set_item("cmap", py.None()),
+
         }.expect("Err of some kind in colormap vals of rc/plots/scatter.rs Scatter.get_plot_kwargs()");
 
         match &self.marker_style {
+
             Some(markerstyle) => {
                 let options = PyDict::new(py);
+
                 match &markerstyle.marker {
                     Some(str_marker) => options.set_item("marker", str_marker.to_string()),
                     None => options.set_item("marker", py.None()),
                 }.expect("Err of some kind in markerstyle vals of src/plots/scatter.rs Scatter.get_plot_kwargs()");
+
                 match &markerstyle.fillstyle {
                     Some(fillstyle_str) => options.set_item("fillstyle", fillstyle_str.to_string()),
                     None => options.set_item("fillstyle", py.None()),
                 }.expect("Err of some kind in markerstyle vals of src/plots/scatter.rs Scatter.get_plot_kwargs()");
+
                 let markerstyling = mpl.call_method("markers.MarkerStyle", (), Some(options)).unwrap();
                 new_dict.set_item("marker", markerstyling)
+
             },
+
             None => new_dict.set_item("marker", py.None()),
+
         }.expect("Err of some kind in markerstyle vals of src/plots/scatter.rs Scatter.get_plot_kwargs()");
 
         new_dict
