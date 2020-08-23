@@ -92,14 +92,14 @@ impl<'p, T: pyo3::conversion::ToPyObject> Scatter<'p, T> {
                 match colormap.n {
                     Some(num) => options.set_item("N", num),
                     None => options.set_item("N", 256),
-                };
+                }.expect("Err of some kind in default vals of src/figax/plots.rs:: Scatter.get_plot_kwargs()");
                 
                 
                 let cmap = mpl.call_method("colors.Colormap", (colormap.name.to_string(),), Some(options)).unwrap();
                 new_dict.set_item("cmap", cmap)
             },
             None =>new_dict.set_item("cmap", py.None()),
-        };
+        }.expect("Err of some kind in colormap of src/figax/plots.rs:: Scatter.get_plot_kwargs()");
 
 
         // match &self.marker_style {
