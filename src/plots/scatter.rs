@@ -1,5 +1,6 @@
 use crate::addition_objs::colormap::Colormap;
 use crate::addition_objs::markerstyle::MarkerStyle;
+use crate::addition_objs::normalize::Normalize;
 use pyo3::prelude::*;
 use pyo3::types::*;
 pub struct Scatter<'p, T: pyo3::conversion::ToPyObject> {
@@ -9,6 +10,7 @@ pub struct Scatter<'p, T: pyo3::conversion::ToPyObject> {
     // cannot use as they take a obj in python don't know how to convert yet:
     marker_style: Option<MarkerStyle>,
     cmap: Option<Colormap>,
+    norm: Option<Normalize>,
 }
 
 impl<'p, T: pyo3::conversion::ToPyObject> Scatter<'p, T> {
@@ -19,6 +21,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Scatter<'p, T> {
             y_data: &y,
             marker_style: None,
             cmap: None,
+            norm: None,
         }
     }
 
@@ -93,6 +96,35 @@ impl<'p, T: pyo3::conversion::ToPyObject> Scatter<'p, T> {
             None => new_dict.set_item("marker", py.None()),
 
         }.expect("Err of some kind in markerstyle vals of src/plots/scatter.rs Scatter.get_plot_kwargs()");
+
+        match &self.norm {
+            Some(norm) => {
+                let options = PyDict::new(py);
+                match &norm.vmin {
+                    Some(vmin) => options.set_item("vmin", vmin),
+                    None => options.set_item("vmin", py.None()),
+                }
+                .expect("error for setting vmin in scatter.rs");
+
+                match &norm.vmax {
+                    Some(vmax) => options.set_item("vmax", vmax),
+                    None => options.set_item("vmax", py.None()),
+                }
+                .expect("error for setting vmax in scatter.rs");
+
+                match &norm.clip {
+                    true => options.set_item("clip", true),
+                    _flase => options.set_item("clip", false),
+                }
+                .expect("error when setting clip of normalise in scatter.rs");
+                let normal = mpl
+                    .call_method("colors.Normalize", (), Some(options))
+                    .unwrap();
+                new_dict.set_item("norm", normal)
+            }
+            None => new_dict.set_item("norm", py.None()),
+        }
+        .expect("error when making norm");
 
         new_dict
     }
