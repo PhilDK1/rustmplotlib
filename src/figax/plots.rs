@@ -31,7 +31,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> PlotData<'p, T> {
 
     pub fn get_plotdata_pykwargs(&self, py: Python<'p>, mpl: &'p PyModule) -> &PyDict {
         match self {
-            PlotData::Scatter(scatter_plot) => scatter_plot.get_plot_kwargs(py, mpl) /*PyDict::new(py)*/, //placeholder
+            PlotData::Scatter(scatter_plot) => scatter_plot.get_plot_kwargs(py, mpl), //placeholder
 
         }
     }

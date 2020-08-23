@@ -1,5 +1,3 @@
-#![allow(unused)]
-use crate::common::Env;
 use crate::figax::plots::*;
 use crate::plots::scatter::*;
 // use crate::addition_objs::colormap::Colormap;
@@ -36,16 +34,17 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
         match &self.title {
             Some(title) => new_dict.set_item("title", title),
             None => new_dict.set_item("title", py.None()),
-        };
+        }.expect("error in getting title");
+
         match &self.xlabel {
             Some(xlabel) => new_dict.set_item("xlabel", xlabel),
             None => new_dict.set_item("xlabel", py.None()),
-        };
+        }.expect("error in getting xlabel");
 
         match &self.ylabel {
             Some(ylabel) => new_dict.set_item("ylabel", ylabel),
             None => new_dict.set_item("ylabel", py.None()),
-        };
+        }.expect("Error in getting ylabel");
         new_dict
     }
     
@@ -159,8 +158,8 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
     pub fn identify(&self) -> String {
         // getst the type of plot and returns name of method call
         match &self.plot_data {
-            Some(PlotData::Scatter(scatter_plot)) => "scatter".to_owned(),
-            // Some(PlotData::Plot(plot)) => "plot".to_owned(),
+            Some(PlotData::Scatter(_scatter_plot)) => "scatter".to_owned(),
+            // Some(PlotData::Plot(_plot)) => "plot".to_owned(),
             None => "No known plot specified".to_owned(), // this will completely mess up the call
         }
     }
