@@ -1,9 +1,11 @@
 #![allow(unused)]
 use crate::common::Env;
 use crate::figax::plots::*;
+use crate::plots::scatter::*;
 // use crate::addition_objs::colormap::Colormap;
 use pyo3::prelude::*;
 use pyo3::types::*;
+
 
 /// will need to probably make a kwargs enum (separate file for readability) and have any kwargs stored
 /// as an Option<Kwargs> of a certain type within and make into a dict at a later point
