@@ -1,6 +1,6 @@
 use pyo3::prelude::*;
 use pyo3::types::*;
-use crate::addition_objs::colormap::Colormap;
+// use crate::addition_objs::colormap::Colormap;
 use crate::plots::scatter::Scatter;
 
 
