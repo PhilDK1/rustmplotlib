@@ -44,35 +44,43 @@ impl<'p, T: pyo3::conversion::ToPyObject> Scatter<'p, T> {
     }
 
     pub fn set_marker(&mut self, markerstyle: MarkerStyle) {
+        // set a markerstyle over writes if already there
         self.marker_style = Some(markerstyle);
     }
 
     pub fn set_cmap(&mut self, cmap: Colormap) {
+        // sets a colormap, over writes if already there
         self.cmap = Some(cmap);
     }
 
     pub fn get_plot_kwargs(&self, py: Python<'p>, mpl: &'p PyModule) -> &PyDict {
+        // returns a reference to a pydict, with the various kwargs that are required, sets to None if not specified
         let new_dict = PyDict::new(py);
 
+        // makes an instance of colormap and adds ref to pydict
         match &self.cmap {
-
+            // if colormap has been specified then unpack data and add to pydict
             Some(colormap) => {
+                // options are kwargs of the matplotlib.colors.Colormap object
                 let options = PyDict::new(py);
 
+                // matches n if specified if not default of 256 is applied
                 match colormap.n {
                     Some(num) => options.set_item("N", num),
                     None => options.set_item("N", 256),
                 }.expect("Err of some kind in default vals of src/figax/plots.rs:: Scatter.get_plot_kwargs()");
-
+                // colormap name must be specified
                 let cmap = mpl.call_method("colors.Colormap", (colormap.name.to_string(),), Some(options)).unwrap();
+                // adds colormap to kwargs of scatter call if colormap specified
                 new_dict.set_item("cmap", cmap)
 
             },
-
+            // if colormap not specified then defaults to None
             None =>new_dict.set_item("cmap", py.None()),
 
         }.expect("Err of some kind in colormap vals of rc/plots/scatter.rs Scatter.get_plot_kwargs()");
 
+        // same as above, sets default to None for unspecified arguement, and adds markerstyle to scatter call kwargs
         match &self.marker_style {
 
             Some(markerstyle) => {
@@ -81,14 +89,19 @@ impl<'p, T: pyo3::conversion::ToPyObject> Scatter<'p, T> {
                 match &markerstyle.marker {
                     Some(str_marker) => options.set_item("marker", str_marker.to_string()),
                     None => options.set_item("marker", py.None()),
-                }.expect("Err of some kind in markerstyle vals of src/plots/scatter.rs Scatter.get_plot_kwargs()");
+                }
+                .expect("Err of some kind in markerstyle vals of src/plots/scatter.rs Scatter.get_plot_kwargs()");
 
                 match &markerstyle.fillstyle {
                     Some(fillstyle_str) => options.set_item("fillstyle", fillstyle_str.to_string()),
                     None => options.set_item("fillstyle", py.None()),
-                }.expect("Err of some kind in markerstyle vals of src/plots/scatter.rs Scatter.get_plot_kwargs()");
+                }
+                .expect("Err of some kind in markerstyle vals of src/plots/scatter.rs Scatter.get_plot_kwargs()");
 
-                let markerstyling = mpl.call_method("markers.MarkerStyle", (), Some(options)).unwrap();
+                let markerstyling = mpl
+                    .call_method("markers.MarkerStyle", (), Some(options))
+                    .unwrap();
+
                 new_dict.set_item("marker", markerstyling)
 
             },
@@ -97,6 +110,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Scatter<'p, T> {
 
         }.expect("Err of some kind in markerstyle vals of src/plots/scatter.rs Scatter.get_plot_kwargs()");
 
+        // same as above, sets default to None for unspecified arguement, and adds norm to scatter call kwargs
         match &self.norm {
             Some(norm) => {
                 let options = PyDict::new(py);
@@ -117,6 +131,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Scatter<'p, T> {
                     _flase => options.set_item("clip", false),
                 }
                 .expect("error when setting clip of normalise in scatter.rs");
+
                 let normal = mpl
                     .call_method("colors.Normalize", (), Some(options))
                     .unwrap();
