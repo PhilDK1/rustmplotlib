@@ -28,7 +28,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
         }
     }
 
-    pub fn add_subplot(mut self, new_axes: axes::Axes<'p, T>) -> Self {
+    pub fn add_subplot(mut self, new_axes: axes::Axes2D<'p, T>) -> Self {
         // adding subplots to figure and returning self
         self.subplots = self.subplots.add_subplot(new_axes);
         self
@@ -106,7 +106,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
 
 struct Subplots<'p, T: pyo3::conversion::ToPyObject> {
     // container for Axes within a figure
-    axes: Vec<axes::Axes<'p, T>>,
+    axes: Vec<axes::Axes2D<'p, T>>,
     grid_layout: Option<(usize, usize)>,
 }
 
@@ -131,7 +131,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Subplots<'p, T> {
         self.axes.len()
     }
 
-    pub fn add_subplot(mut self, new_axes: axes::Axes<'p, T>) -> Self {
+    pub fn add_subplot(mut self, new_axes: axes::Axes2D<'p, T>) -> Self {
         // function to add an axes to the subplot struct and in turn to figure
         self.axes.push(new_axes);
         self

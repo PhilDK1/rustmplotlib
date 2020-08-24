@@ -3,11 +3,103 @@ use crate::plots::scatter::*;
 // use crate::addition_objs::colormap::Colormap;
 use pyo3::prelude::*;
 use pyo3::types::*;
+/*
+pub enum Axes<'p, T: pyo3::conversion::ToPyObject> {
+    Axes2d(Axes2D<'p, T>),
+}
 
-/// will need to probably make a kwargs enum (separate file for readability) and have any kwargs stored
-/// as an Option<Kwargs> of a certain type within and make into a dict at a later point
+impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
+    pub fn axes2d() -> Axes<'p, T> {
+        Axes::Axes2d(Axes2D::empty())
+    }
 
-pub struct Axes<'p, T: pyo3::conversion::ToPyObject> {
+    pub fn get_kwargs(&self, py: Python<'p>) -> &PyDict {
+        match &self {
+            Axes::Axes2d(ax2d) => ax2d.get_kwargs(py)
+        }
+    }
+
+    pub fn set_index(&mut self, index: usize) {
+        match &self {
+            Axes::Axes2d(ax2d) => ax2d.set_index(index)
+        };
+    }
+
+    pub fn get_index(&self) -> Result<usize, &'static str> {
+        match &self {
+            Axes::Axes2d(ax2d) => ax2d.get_index()
+        }
+    }
+
+    pub fn set_title(&mut self, title: &str) {
+        match &self {
+            Axes::Axes2d(ax2d) => ax2d.set_title(title),
+        };
+    }
+
+    pub fn get_title(&self) -> Result<String, &'static str> {
+        match &self {
+            Axes::Axes2d(ax2d) => ax2d.get_title(),
+        }
+    }
+
+    pub fn set_xlabel(&mut self, xlabel: &str) {
+        match &self {
+            Axes::Axes2d(ax2d) => ax2d.set_xlabel(xlabel),
+        }
+    }
+
+    pub fn get_xlabel(&self) -> Result<String, &'static str> {
+        match &self {
+            Axes::Axes2d(ax2d) => ax2d.get_xlabel(),
+        }
+    }
+
+    pub fn set_ylabel(&mut self, ylabel: &str) {
+        match &self {
+            Axes::Axes2d(ax2d) => ax2d.set_ylabel(ylabel),
+        }
+    }
+
+    pub fn get_ylabel(&self) -> Result<String, &'static str> {
+        match &self {
+            Axes::Axes2d(ax2d) => ax2d.get_ylabel(),
+        }
+    }
+
+    pub fn get_plot_data(&self)-> Result<&PlotData<'p, T>, &'static str> {
+        match &self {
+            Axes::Axes2d(ax2d) => ax2d.get_plot_data(),
+        }
+    }
+
+    pub fn scatter(self, x: &'p [T], y: &'p [T]) -> Self {
+        match self {
+            Axes::Axes2d(ax2d) => Axes::Axes2d(ax2d.scatter(x, y)),
+        }
+    }
+
+    pub fn set_xdata(&mut self, x_data: &'p [T]) {
+        match &self {
+            Axes::Axes2d(ax2d) => ax2d.set_xdata(x_data),
+        }
+    }
+
+    pub fn set_ydata(&mut self, y_data: &'p [T]) {
+        match &self {
+            Axes::Axes2d(ax2d) => ax2d.set_ydata(y_data),
+        }
+    }
+    
+    pub fn identify(&self) -> String {
+        match &self {
+            Axes::Axes2d(ax2d) => ax2d.identify(),
+        }
+    }
+
+} */
+
+pub struct Axes2D<'p, T: pyo3::conversion::ToPyObject> {
     plot_data: Option<PlotData<'p, T>>,
     title: Option<String>, // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.set_title.html#matplotlib-axes-axes-set-title
     xlabel: Option<String>, //https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.set_xlabel.html#matplotlib.axes.Axes.set_xlabel
@@ -15,10 +107,10 @@ pub struct Axes<'p, T: pyo3::conversion::ToPyObject> {
     plot_index: Option<usize>,
 }
 
-impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
-    pub fn empty() -> Axes<'p, T> {
+impl<'p, T: pyo3::conversion::ToPyObject> Axes2D<'p, T> {
+    pub fn empty() -> Axes2D<'p, T> {
         // creates empty instance of Axes
-        Axes::<T> {
+        Axes2D::<T> {
             plot_data: None,
             title: None,
             xlabel: None,
