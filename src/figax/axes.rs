@@ -3,7 +3,7 @@ use crate::plots::scatter::*;
 // use crate::addition_objs::colormap::Colormap;
 use pyo3::prelude::*;
 use pyo3::types::*;
-
+/*
 pub enum Axes<'p, T: pyo3::conversion::ToPyObject> {
     Axes2d(Axes2D<'p, T>),
 }
@@ -19,10 +19,13 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
         }
     }
 
-    pub fn set_index(mut self, index: usize) {
+    pub fn set_index(mut self, index: usize) -> Self{
         match &mut self {
-            Axes::Axes2d(ax2d) => ax2d.set_index(index),
-        };
+            Axes::Axes2d(ax2d) => {
+                ax2d.set_index(index);
+                self
+            }
+        }
     }
 
     pub fn get_index(&self) -> Result<usize, &'static str> {
@@ -78,7 +81,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
             Axes::Axes2d(ax2d) => Axes::Axes2d(ax2d.scatter(x, y)),
         }
     }
-
+/*
     pub fn set_xdata(mut self, x_data: &'p [T]) {
         match &mut self {
             Axes::Axes2d(ax2d) => ax2d.set_xdata(x_data),
@@ -90,15 +93,15 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
             Axes::Axes2d(ax2d) => ax2d.set_ydata(y_data),
         }
     }
-
+*/
     pub fn identify(&self) -> String {
         match &self {
             Axes::Axes2d(ax2d) => ax2d.identify(),
         }
     }
 }
-
-pub struct Axes2D<'p, T: pyo3::conversion::ToPyObject> {
+*/
+pub struct Axes<'p, T: pyo3::conversion::ToPyObject> {
     plot_data: Option<PlotData<'p, T>>,
     title: Option<String>, // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.set_title.html#matplotlib-axes-axes-set-title
     xlabel: Option<String>, //https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.set_xlabel.html#matplotlib.axes.Axes.set_xlabel
@@ -106,10 +109,10 @@ pub struct Axes2D<'p, T: pyo3::conversion::ToPyObject> {
     plot_index: Option<usize>,
 }
 
-impl<'p, T: pyo3::conversion::ToPyObject> Axes2D<'p, T> {
-    pub fn empty() -> Axes2D<'p, T> {
+impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
+    pub fn empty() -> Axes<'p, T> {
         // creates empty instance of Axes
-        Axes2D::<T> {
+        Axes::<T> {
             plot_data: None,
             title: None,
             xlabel: None,
@@ -125,30 +128,18 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes2D<'p, T> {
             Some(title) => new_dict.set_item("title", title),
             None => new_dict.set_item("title", py.None()),
         }
-        .map_err(|e| {
-            // logging errors and printing
-            e.print_and_set_sys_last_vars(py);
-        })
         .expect("error in getting title");
 
         match &self.xlabel {
             Some(xlabel) => new_dict.set_item("xlabel", xlabel),
             None => new_dict.set_item("xlabel", py.None()),
         }
-        .map_err(|e| {
-            // logging errors and printing
-            e.print_and_set_sys_last_vars(py);
-        })
         .expect("error in getting xlabel");
 
         match &self.ylabel {
             Some(ylabel) => new_dict.set_item("ylabel", ylabel),
             None => new_dict.set_item("ylabel", py.None()),
         }
-        .map_err(|e| {
-            // logging errors and printing
-            e.print_and_set_sys_last_vars(py);
-        })
         .expect("Error in getting ylabel");
         new_dict
     }

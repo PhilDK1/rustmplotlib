@@ -118,30 +118,18 @@ impl<'p, T: pyo3::conversion::ToPyObject> Scatter<'p, T> {
                     Some(vmin) => options.set_item("vmin", vmin),
                     None => options.set_item("vmin", py.None()),
                 }
-                .map_err(|e| {
-                    // logging errors and printing
-                    e.print_and_set_sys_last_vars(py);
-                })
                 .expect("error for setting vmin in scatter.rs");
 
                 match &norm.vmax {
                     Some(vmax) => options.set_item("vmax", vmax),
                     None => options.set_item("vmax", py.None()),
                 }
-                .map_err(|e| {
-                    // logging errors and printing
-                    e.print_and_set_sys_last_vars(py);
-                })
                 .expect("error for setting vmax in scatter.rs");
 
                 match &norm.clip {
                     true => options.set_item("clip", true),
                     _flase => options.set_item("clip", false),
                 }
-                .map_err(|e| {
-                    // logging errors and printing
-                    e.print_and_set_sys_last_vars(py);
-                })
                 .expect("error when setting clip of normalise in scatter.rs");
 
                 let normal = mpl
@@ -156,7 +144,3 @@ impl<'p, T: pyo3::conversion::ToPyObject> Scatter<'p, T> {
         new_dict
     }
 }
-
-// pub struct Plot {
-//     // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.plot.html#matplotlib-axes-axes-plot
-// }
