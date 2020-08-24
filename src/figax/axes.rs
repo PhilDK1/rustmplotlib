@@ -9,26 +9,25 @@ pub enum Axes<'p, T: pyo3::conversion::ToPyObject> {
 }
 
 impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
-
     pub fn axes2d() -> Axes<'p, T> {
         Axes::Axes2d(Axes2D::empty())
     }
 
     pub fn get_kwargs(&self, py: Python<'p>) -> &PyDict {
         match &self {
-            Axes::Axes2d(ax2d) => ax2d.get_kwargs(py)
+            Axes::Axes2d(ax2d) => ax2d.get_kwargs(py),
         }
     }
 
     pub fn set_index(mut self, index: usize) {
         match &mut self {
-            Axes::Axes2d(ax2d) => ax2d.set_index(index)
+            Axes::Axes2d(ax2d) => ax2d.set_index(index),
         };
     }
 
     pub fn get_index(&self) -> Result<usize, &'static str> {
         match &self {
-            Axes::Axes2d(ax2d) => ax2d.get_index()
+            Axes::Axes2d(ax2d) => ax2d.get_index(),
         }
     }
 
@@ -68,7 +67,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
         }
     }
 
-    pub fn get_plot_data(&self)-> Result<&PlotData<'p, T>, &'static str> {
+    pub fn get_plot_data(&self) -> Result<&PlotData<'p, T>, &'static str> {
         match &self {
             Axes::Axes2d(ax2d) => ax2d.get_plot_data(),
         }
@@ -97,8 +96,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
             Axes::Axes2d(ax2d) => ax2d.identify(),
         }
     }
-
-} 
+}
 
 pub struct Axes2D<'p, T: pyo3::conversion::ToPyObject> {
     plot_data: Option<PlotData<'p, T>>,
