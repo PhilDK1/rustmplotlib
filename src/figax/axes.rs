@@ -3,12 +3,13 @@ use crate::plots::scatter::*;
 // use crate::addition_objs::colormap::Colormap;
 use pyo3::prelude::*;
 use pyo3::types::*;
-/*
+
 pub enum Axes<'p, T: pyo3::conversion::ToPyObject> {
     Axes2d(Axes2D<'p, T>),
 }
 
 impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
+
     pub fn axes2d() -> Axes<'p, T> {
         Axes::Axes2d(Axes2D::empty())
     }
@@ -19,8 +20,8 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
         }
     }
 
-    pub fn set_index(&mut self, index: usize) {
-        match &self {
+    pub fn set_index(mut self, index: usize) {
+        match &mut self {
             Axes::Axes2d(ax2d) => ax2d.set_index(index)
         };
     }
@@ -31,8 +32,8 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
         }
     }
 
-    pub fn set_title(&mut self, title: &str) {
-        match &self {
+    pub fn set_title(mut self, title: &str) {
+        match &mut self {
             Axes::Axes2d(ax2d) => ax2d.set_title(title),
         };
     }
@@ -43,8 +44,8 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
         }
     }
 
-    pub fn set_xlabel(&mut self, xlabel: &str) {
-        match &self {
+    pub fn set_xlabel(mut self, xlabel: &str) {
+        match &mut self {
             Axes::Axes2d(ax2d) => ax2d.set_xlabel(xlabel),
         }
     }
@@ -55,8 +56,8 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
         }
     }
 
-    pub fn set_ylabel(&mut self, ylabel: &str) {
-        match &self {
+    pub fn set_ylabel(mut self, ylabel: &str) {
+        match &mut self {
             Axes::Axes2d(ax2d) => ax2d.set_ylabel(ylabel),
         }
     }
@@ -79,14 +80,14 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
         }
     }
 
-    pub fn set_xdata(&mut self, x_data: &'p [T]) {
-        match &self {
+    pub fn set_xdata(mut self, x_data: &'p [T]) {
+        match &mut self {
             Axes::Axes2d(ax2d) => ax2d.set_xdata(x_data),
         }
     }
 
-    pub fn set_ydata(&mut self, y_data: &'p [T]) {
-        match &self {
+    pub fn set_ydata(mut self, y_data: &'p [T]) {
+        match &mut self {
             Axes::Axes2d(ax2d) => ax2d.set_ydata(y_data),
         }
     }
@@ -97,7 +98,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
         }
     }
 
-} */
+} 
 
 pub struct Axes2D<'p, T: pyo3::conversion::ToPyObject> {
     plot_data: Option<PlotData<'p, T>>,
@@ -126,18 +127,30 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes2D<'p, T> {
             Some(title) => new_dict.set_item("title", title),
             None => new_dict.set_item("title", py.None()),
         }
+        .map_err(|e| {
+            // logging errors and printing
+            e.print_and_set_sys_last_vars(py);
+        })
         .expect("error in getting title");
 
         match &self.xlabel {
             Some(xlabel) => new_dict.set_item("xlabel", xlabel),
             None => new_dict.set_item("xlabel", py.None()),
         }
+        .map_err(|e| {
+            // logging errors and printing
+            e.print_and_set_sys_last_vars(py);
+        })
         .expect("error in getting xlabel");
 
         match &self.ylabel {
             Some(ylabel) => new_dict.set_item("ylabel", ylabel),
             None => new_dict.set_item("ylabel", py.None()),
         }
+        .map_err(|e| {
+            // logging errors and printing
+            e.print_and_set_sys_last_vars(py);
+        })
         .expect("Error in getting ylabel");
         new_dict
     }
