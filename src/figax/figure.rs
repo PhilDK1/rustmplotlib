@@ -71,11 +71,11 @@ impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
             // gets arguements for
             let axis_kwargs = axis.get_kwargs(self.py);
             // position on the grid made up of grid layout and the index at which it is stored
-            // let position: (usize, usize, usize) = (layout.0, layout.1, axis.get_index().unwrap());
+            let position: (usize, usize, usize) = (layout.0, layout.1, axis.get_index().unwrap());
 
             // equivalent of calling figure.add_subplot(nrow, ncol, index)
             let ax = figure
-                .call_method("add_subplot", /*position*/(), Some(axis_kwargs)) // actually calling method
+                .call_method("add_subplot", position, Some(axis_kwargs)) // actually calling method
                 .map_err(|e| {
                     // logging errors and printing
                     e.print_and_set_sys_last_vars(self.py);
@@ -87,9 +87,9 @@ impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
 
             // (... the following line together)  // convert plot data to &PyTuple so it can be passed to call_method function below
             let plot_args = plotdata.get_plotdata_pyargs(self.py);
-            // let plot_kwargs = plotdata.get_plotdata_pykwargs(self.py, self.mpl);
+            let plot_kwargs = plotdata.get_plotdata_pykwargs(self.py, self.mpl);
 
-            ax.call_method(name.as_str(), plot_args, None/*Some(plot_kwargs)*/) // actually saying the plot type (i.e. plt.scatter(), plt.plot, etc. )
+            ax.call_method(name.as_str(), plot_args, Some(plot_kwargs)) // actually saying the plot type (i.e. plt.scatter(), plt.plot, etc. )
                 .map_err(|e| {
                     // logging errors and printing
                     e.print_and_set_sys_last_vars(self.py);
