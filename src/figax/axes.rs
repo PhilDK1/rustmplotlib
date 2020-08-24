@@ -90,7 +90,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
             Axes::Axes2d(ax2d) => ax2d.set_ydata(y_data),
         }
     }
-    
+
     pub fn identify(&self) -> String {
         match &self {
             Axes::Axes2d(ax2d) => ax2d.identify(),
