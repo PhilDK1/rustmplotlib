@@ -1,10 +1,10 @@
 mod axes;
+mod axes_types;
 mod figure;
 mod plots;
-mod axes_types;
 
 // re-exports
 pub use axes::*;
+pub use axes_types::*;
 pub use figure::*;
 pub use plots::*;
-pub use axes_types::*;

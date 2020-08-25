@@ -1,10 +1,9 @@
-use crate::figax::plots::*;
-use crate::plots::scatter::*;
 use crate::addition_objs::colormap::Colormap;
 use crate::addition_objs::markerstyle::MarkerStyle;
+use crate::figax::plots::*;
+use crate::plots::scatter::*;
 use pyo3::prelude::*;
 use pyo3::types::*;
-
 
 pub struct Axes2D<'p, T: pyo3::conversion::ToPyObject> {
     plot_data: Option<PlotData<'p, T>>,
@@ -149,7 +148,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes2D<'p, T> {
             _ => println!("Not implimented yet."),
         }
     }
-    
+
     pub fn set_marker(&mut self, marker: MarkerStyle) {
         match &mut self.plot_data {
             Some(PlotData::Scatter(scatter_plot)) => scatter_plot.set_marker(marker),

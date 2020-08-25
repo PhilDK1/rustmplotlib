@@ -158,7 +158,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Scatter<'p, T> {
 
         match &self.alpha {
             Some(alp) => new_dict.set_item("alpha", *alp),
-            None =>new_dict.set_item("alpha", py.None()),
+            None => new_dict.set_item("alpha", py.None()),
         }
         .expect("error when setting alpha");
 

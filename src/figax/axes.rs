@@ -21,7 +21,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
         }
     }
 
-    pub fn set_index(mut self, index: usize) -> Self{
+    pub fn set_index(mut self, index: usize) -> Self {
         match &mut self {
             Axes::Axes2d(ax2d) => {
                 ax2d.set_index(index);
@@ -83,19 +83,19 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
             Axes::Axes2d(ax2d) => Axes::Axes2d(ax2d.scatter(x, y)),
         }
     }
-/*
-    pub fn set_xdata(mut self, x_data: &'p [T]) {
-        match &mut self {
-            Axes::Axes2d(ax2d) => ax2d.set_xdata(x_data),
+    /*
+        pub fn set_xdata(mut self, x_data: &'p [T]) {
+            match &mut self {
+                Axes::Axes2d(ax2d) => ax2d.set_xdata(x_data),
+            }
         }
-    }
 
-    pub fn set_ydata(mut self, y_data: &'p [T]) {
-        match &mut self {
-            Axes::Axes2d(ax2d) => ax2d.set_ydata(y_data),
+        pub fn set_ydata(mut self, y_data: &'p [T]) {
+            match &mut self {
+                Axes::Axes2d(ax2d) => ax2d.set_ydata(y_data),
+            }
         }
-    }
-*/
+    */
     pub fn identify(&self) -> String {
         match &self {
             Axes::Axes2d(ax2d) => ax2d.identify(),
