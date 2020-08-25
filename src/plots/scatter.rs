@@ -7,10 +7,11 @@ pub struct Scatter<'p, T: pyo3::conversion::ToPyObject> {
     // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.scatter.html#matplotlib.axes.Axes.scatter
     x_data: &'p [T],
     y_data: &'p [T],
-    // cannot use as they take a obj in python don't know how to convert yet:
     marker_style: Option<MarkerStyle>,
     cmap: Option<Colormap>,
     norm: Option<Normalize>,
+    alpha: Option<f32>,
+    plotnonfinite: bool,
 }
 
 impl<'p, T: pyo3::conversion::ToPyObject> Scatter<'p, T> {
@@ -22,6 +23,8 @@ impl<'p, T: pyo3::conversion::ToPyObject> Scatter<'p, T> {
             marker_style: None,
             cmap: None,
             norm: None,
+            alpha: None,
+            plotnonfinite: false,
         }
     }
 
@@ -51,6 +54,18 @@ impl<'p, T: pyo3::conversion::ToPyObject> Scatter<'p, T> {
     pub fn set_cmap(&mut self, cmap: Colormap) {
         // sets a colormap, over writes if already there
         self.cmap = Some(cmap);
+    }
+
+    pub fn set_norm(&mut self, norm: Normalize) {
+        self.norm = Some(norm);
+    }
+
+    pub fn set_alpha(&mut self, alpha: f32) {
+        self.alpha = Some(alpha);
+    }
+
+    pub fn plotnonfinite(&mut self) {
+        self.plotnonfinite = true;
     }
 
     pub fn get_plot_kwargs(&self, py: Python<'p>, mpl: &'p PyModule) -> &PyDict {
@@ -140,6 +155,18 @@ impl<'p, T: pyo3::conversion::ToPyObject> Scatter<'p, T> {
             None => new_dict.set_item("norm", py.None()),
         }
         .expect("error when making norm");
+
+        match &self.alpha {
+            Some(alp) => new_dict.set_item("alpha", *alp),
+            None =>new_dict.set_item("alpha", py.None()),
+        }
+        .expect("error when setting alpha");
+
+        match &self.plotnonfinite {
+            true => new_dict.set_item("plotnonfinite", true),
+            false => new_dict.set_item("plotnonfinite", false),
+        }
+        .expect("error when setting plotnonfinite kwarg");
 
         new_dict
     }
