@@ -26,7 +26,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
         Figure {
             py: python,
             plt: plot,
-            mpl: mpl,
+            mpl,
             subplots: set_of_subplots,
         }
     }
