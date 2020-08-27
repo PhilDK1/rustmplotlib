@@ -13,6 +13,23 @@ pub struct Plot<'p, T: pyo3::conversion::ToPyObject> {
     scaley: bool,
 }
 
+impl<'p, T: pyo3::conversion::ToPyObject> Plot<'p, T: pyo3::conversion::ToPyObject>{
+    pub fn new(x: &[T], y: &[T]) -> Plot<'p, T> {
+        Plot {
+            x,
+            y,
+            fmt: None,
+            scalex: false,
+            scaley: false,
+        }
+
+    }
+
+    pub fn fmt(&mut self, fmt: String) {
+        self.fmt = Some(fmt);
+    }
+}
+
 pub struct Line2D<'p, T: pyo3::conversion::ToPyObject> {
         // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.lines.Line2D.html#matplotlib.lines.Line2D
         // agg_filter,
