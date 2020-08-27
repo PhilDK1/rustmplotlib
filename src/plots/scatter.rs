@@ -11,6 +11,8 @@ pub struct Scatter<'p, T: pyo3::conversion::ToPyObject> {
     cmap: Option<Colormap>,
     norm: Option<Normalize>,
     alpha: Option<f32>,
+    // linewidths,
+    // edge colors,
     plotnonfinite: bool,
 }
 
