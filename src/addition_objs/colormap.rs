@@ -15,3 +15,13 @@ impl Colormap {
         }
     }
 }
+
+
+// pub enum Colors {
+//     // https://matplotlib.org/3.2.2/tutorials/introductory/customizing.html?highlight=scatter.edgecolors#a-sample-matplotlibrc-file
+//     ColorString(String),
+//     RGB(f32, f32, f32),
+//     Hex(String),
+//     GrayScale(f32),
+//     LegalHTML(String),
+// }
