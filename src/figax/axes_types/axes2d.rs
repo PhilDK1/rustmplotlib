@@ -171,6 +171,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes2D<'p, T> {
         // getst the type of plot and returns name of method call
         match &self.plot_data {
             Some(PlotData::Scatter(_scatter_plot)) => "scatter".to_owned(),
+            Some(PlotData::PlotSurface(_surface_plot)) => "plot_surface".to_owned(),
             // Some(PlotData::Plot(_plot)) => "plot".to_owned(),
             None => "No known plot specified".to_owned(), // this will completely mess up the call
         }

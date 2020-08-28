@@ -8,6 +8,7 @@ use pyo3::types::*;
 
 pub enum Axes<'p, T: pyo3::conversion::ToPyObject> {
     Axes2d(Axes2D<'p, T>),
+    Axes3d(Axes3D<'p, T>),
 }
 
 impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
@@ -15,9 +16,14 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
         Axes::Axes2d(Axes2D::empty())
     }
 
+    pub fn axes3d() -> Axes<'p, T> {
+        Axes::Axes3d(Axes3D::empty())
+    }
+
     pub fn get_kwargs(&self, py: Python<'p>) -> &PyDict {
         match &self {
             Axes::Axes2d(ax2d) => ax2d.get_kwargs(py),
+            Axes::Axes3d(ax3d) => ax3d.get_kwargs(py),
         }
     }
 
@@ -27,60 +33,79 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
                 ax2d.set_index(index);
                 self
             }
+            Axes::Axes3d(ax3d) => {
+                ax3d.set_index(index);
+                self
+            }
         }
     }
 
     pub fn get_index(&self) -> Result<usize, &'static str> {
         match &self {
             Axes::Axes2d(ax2d) => ax2d.get_index(),
+            Axes::Axes3d(ax3d) => ax3d.get_index(),
         }
     }
 
     pub fn set_title(mut self, title: &str) {
         match &mut self {
             Axes::Axes2d(ax2d) => ax2d.set_title(title),
+            Axes::Axes3d(ax3d) => ax3d.set_title(title),
         };
     }
 
     pub fn get_title(&self) -> Result<String, &'static str> {
         match &self {
             Axes::Axes2d(ax2d) => ax2d.get_title(),
+            Axes::Axes3d(ax3d) => ax3d.get_title(),
+
         }
     }
 
     pub fn set_xlabel(mut self, xlabel: &str) {
         match &mut self {
             Axes::Axes2d(ax2d) => ax2d.set_xlabel(xlabel),
+            Axes::Axes3d(ax3d) => ax3d.set_xlabel(xlabel),
+
         }
     }
 
     pub fn get_xlabel(&self) -> Result<String, &'static str> {
         match &self {
             Axes::Axes2d(ax2d) => ax2d.get_xlabel(),
+            Axes::Axes3d(ax3d) => ax3d.get_xlabel(),
+
         }
     }
 
     pub fn set_ylabel(mut self, ylabel: &str) {
         match &mut self {
             Axes::Axes2d(ax2d) => ax2d.set_ylabel(ylabel),
+            Axes::Axes3d(ax3d) => ax3d.set_ylabel(ylabel),
+
         }
     }
 
     pub fn get_ylabel(&self) -> Result<String, &'static str> {
         match &self {
             Axes::Axes2d(ax2d) => ax2d.get_ylabel(),
+            Axes::Axes3d(ax3d) => ax3d.get_ylabel(),
+
         }
     }
 
     pub fn get_plot_data(&self) -> Result<&PlotData<'p, T>, &'static str> {
         match &self {
             Axes::Axes2d(ax2d) => ax2d.get_plot_data(),
+            Axes::Axes3d(ax3d) => ax3d.get_plot_data(),
+
         }
     }
 
-    pub fn scatter(self, x: &'p [T], y: &'p [T]) -> Self {
+    pub fn scatter(self, x: &'p [T], y: &'p [T]) -> Result<Self, &'static str> {
         match self {
-            Axes::Axes2d(ax2d) => Axes::Axes2d(ax2d.scatter(x, y)),
+            Axes::Axes2d(ax2d) => Ok(Axes::Axes2d(ax2d.scatter(x, y))),
+            Axes::Axes3d(_ax3d)=> Err("Scatter is not supported with 3d axes"),
         }
     }
     /*
@@ -99,6 +124,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
     pub fn identify(&self) -> String {
         match &self {
             Axes::Axes2d(ax2d) => ax2d.identify(),
+            Axes::Axes3d(ax3d) => ax3d.identify(),
         }
     }
 }
