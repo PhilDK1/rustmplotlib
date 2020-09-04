@@ -23,14 +23,14 @@ impl<'py, T: pyo3::conversion::ToPyObject> PlotSurface<'py,T>{
     fn create_mesh_args(&self) {
         let len_x = self.x.len();
         let len_y = self.y.len();
-        let new_x: Vec<Vec<T>>= Vec::new();
-        let new_y: Vec<Vec<T>>= Vec::new();
+        let _new_x: Vec<Vec<T>>= Vec::new();
+        let _new_y: Vec<Vec<T>>= Vec::new();
         // let s = self.x.to_vec();
 
-        for i in 0..len_y {
+        for _i in 0..len_y {
             // new_x.push(self.x.to_vec());
         }
-        for i in 0..len_x {
+        for _i in 0..len_x {
             // new_y.push(self.y.to_vec());
         }
     }
