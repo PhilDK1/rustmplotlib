@@ -18,8 +18,8 @@ impl<'py, T: pyo3::conversion::ToPyObject> Figure<'py, T> {
         let python = env.gil.python();
 
         // import matplotlib,pyplot
-        let plot = python.import("matplotlib.pyplot").unwrap();
-        let mpl = python.import("matplotlib").unwrap();
+        let plot = python.import("matplotlib.pyplot").unwrap(); // for the main calls
+        let mpl = python.import("matplotlib").unwrap(); // for the calls for other objects such as colormap, etc.
 
         // makes subplot
         let set_of_subplots = Subplots::initialise();
