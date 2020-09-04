@@ -5,16 +5,16 @@ use crate::plots::scatter::*;
 use pyo3::prelude::*;
 use pyo3::types::*;
 
-pub struct Axes2D<'p, T: pyo3::conversion::ToPyObject> {
-    plot_data: Option<PlotData<'p, T>>,
+pub struct Axes2D<'py, T: pyo3::conversion::ToPyObject> {
+    plot_data: Option<PlotData<'py, T>>,
     title: Option<String>, // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.set_title.html#matplotlib-axes-axes-set-title
     xlabel: Option<String>, //https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.set_xlabel.html#matplotlib.axes.Axes.set_xlabel
     ylabel: Option<String>, //https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.set_ylabel.html#matplotlib.axes.Axes.set_ylabel
     plot_index: Option<usize>,
 }
 
-impl<'p, T: pyo3::conversion::ToPyObject> Axes2D<'p, T> {
-    pub fn empty() -> Axes2D<'p, T> {
+impl<'py, T: pyo3::conversion::ToPyObject> Axes2D<'py, T> {
+    pub fn empty() -> Axes2D<'py, T> {
         // creates empty instance of Axes
         Axes2D::<T> {
             plot_data: None,
@@ -25,7 +25,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes2D<'p, T> {
         }
     }
 
-    pub fn get_kwargs(&self, py: Python<'p>) -> &PyDict {
+    pub fn get_kwargs(&self, py: Python<'py>) -> &PyDict {
         let new_dict = PyDict::new(py);
         // get methods not suitable as error's occur when Err variant is returned
         match &self.title {
@@ -118,7 +118,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes2D<'p, T> {
         }
     }
 
-    pub fn get_plot_data(&self) -> Result<&PlotData<'p, T>, &'static str> {
+    pub fn get_plot_data(&self) -> Result<&PlotData<'py, T>, &'static str> {
         // gets the plotdata if specified else errors
         match &self.plot_data {
             Some(plot_data) => Ok(plot_data),
@@ -126,14 +126,14 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes2D<'p, T> {
         }
     }
 
-    pub fn scatter(mut self, x: &'p [T], y: &'p [T]) -> Self {
+    pub fn scatter(mut self, x: &'py [T], y: &'py [T]) -> Self {
         // sets the plotdata to scatter plot and makes instance of scatterplot
-        let scatter_plot: PlotData<'p, T> = PlotData::Scatter(Scatter::new(x, y));
+        let scatter_plot: PlotData<'py, T> = PlotData::Scatter(Scatter::new(x, y));
         self.plot_data = Some(scatter_plot);
         self
     }
 
-    pub fn set_xdata(&mut self, x_data: &'p [T]) {
+    pub fn set_xdata(&mut self, x_data: &'py [T]) {
         // sets the xdata of the plot type
         match &mut self.plot_data {
             Some(PlotData::Scatter(scatter_plot)) => scatter_plot.set_xdata(x_data),
@@ -141,7 +141,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes2D<'p, T> {
         }
     }
 
-    pub fn set_ydata(&mut self, y_data: &'p [T]) {
+    pub fn set_ydata(&mut self, y_data: &'py [T]) {
         // sets ydata of the plot type
         match &mut self.plot_data {
             Some(PlotData::Scatter(scatter_plot)) => scatter_plot.set_ydata(y_data),

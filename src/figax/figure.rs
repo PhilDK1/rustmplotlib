@@ -2,16 +2,16 @@ use crate::common::Env;
 use crate::figax::axes;
 use pyo3::prelude::*;
 
-pub struct Figure<'p, T: pyo3::conversion::ToPyObject> {
+pub struct Figure<'py, T: pyo3::conversion::ToPyObject> {
     // Meant to represent matplotlib.figure.figure instance
-    py: Python<'p>,
-    plt: &'p PyModule,
-    mpl: &'p PyModule,
-    subplots: Subplots<'p, T>,
+    py: Python<'py>,
+    plt: &'py PyModule,
+    mpl: &'py PyModule,
+    subplots: Subplots<'py, T>,
 }
 
-impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
-    pub fn new<'a: 'p>(env: &'a Env) -> Figure<'p, T> {
+impl<'py, T: pyo3::conversion::ToPyObject> Figure<'py, T> {
+    pub fn new<'a: 'py>(env: &'a Env) -> Figure<'py, T> {
         // instantiate the figure object
 
         // start python instance
@@ -31,7 +31,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
         }
     }
 
-    pub fn add_subplot(mut self, new_axes: axes::Axes<'p, T>) -> Self {
+    pub fn add_subplot(mut self, new_axes: axes::Axes<'py, T>) -> Self {
         // adding subplots to figure and returning self
         self.subplots = self.subplots.add_subplot(new_axes);
         self
@@ -107,14 +107,14 @@ impl<'p, T: pyo3::conversion::ToPyObject> Figure<'p, T> {
     }
 }
 
-struct Subplots<'p, T: pyo3::conversion::ToPyObject> {
+struct Subplots<'py, T: pyo3::conversion::ToPyObject> {
     // container for Axes within a figure
-    axes: Vec<axes::Axes<'p, T>>,
+    axes: Vec<axes::Axes<'py, T>>,
     grid_layout: Option<(usize, usize)>,
 }
 
-impl<'p, T: pyo3::conversion::ToPyObject> Subplots<'p, T> {
-    pub fn initialise() -> Subplots<'p, T> {
+impl<'py, T: pyo3::conversion::ToPyObject> Subplots<'py, T> {
+    pub fn initialise() -> Subplots<'py, T> {
         // function to make an empty Subplots object
         Subplots {
             axes: vec![],
@@ -134,7 +134,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Subplots<'p, T> {
         self.axes.len()
     }
 
-    pub fn add_subplot(mut self, new_axes: axes::Axes<'p, T>) -> Self {
+    pub fn add_subplot(mut self, new_axes: axes::Axes<'py, T>) -> Self {
         // function to add an axes to the subplot struct and in turn to figure
         self.axes.push(new_axes);
         self

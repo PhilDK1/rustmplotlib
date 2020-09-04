@@ -6,21 +6,21 @@ use crate::figax::axes_types::*;
 use pyo3::prelude::*;
 use pyo3::types::*;
 
-pub enum Axes<'p, T: pyo3::conversion::ToPyObject> {
-    Axes2d(Axes2D<'p, T>),
-    Axes3d(Axes3D<'p, T>),
+pub enum Axes<'py, T: pyo3::conversion::ToPyObject> {
+    Axes2d(Axes2D<'py, T>),
+    Axes3d(Axes3D<'py, T>),
 }
 
-impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
-    pub fn axes2d() -> Axes<'p, T> {
+impl<'py, T: pyo3::conversion::ToPyObject> Axes<'py, T> {
+    pub fn axes2d() -> Axes<'py, T> {
         Axes::Axes2d(Axes2D::empty())
     }
 
-    pub fn axes3d() -> Axes<'p, T> {
+    pub fn axes3d() -> Axes<'py, T> {
         Axes::Axes3d(Axes3D::empty())
     }
 
-    pub fn get_kwargs(&self, py: Python<'p>) -> &PyDict {
+    pub fn get_kwargs(&self, py: Python<'py>) -> &PyDict {
         match &self {
             Axes::Axes2d(ax2d) => ax2d.get_kwargs(py),
             Axes::Axes3d(ax3d) => ax3d.get_kwargs(py),
@@ -94,7 +94,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
         }
     }
 
-    pub fn get_plot_data(&self) -> Result<&PlotData<'p, T>, &'static str> {
+    pub fn get_plot_data(&self) -> Result<&PlotData<'py, T>, &'static str> {
         match &self {
             Axes::Axes2d(ax2d) => ax2d.get_plot_data(),
             Axes::Axes3d(ax3d) => ax3d.get_plot_data(),
@@ -102,20 +102,20 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes<'p, T> {
         }
     }
 
-    pub fn scatter(self, x: &'p [T], y: &'p [T]) -> Result<Self, &'static str> {
+    pub fn scatter(self, x: &'py [T], y: &'py [T]) -> Result<Self, &'static str> {
         match self {
             Axes::Axes2d(ax2d) => Ok(Axes::Axes2d(ax2d.scatter(x, y))),
             Axes::Axes3d(_ax3d)=> Err("Scatter is not supported with 3d axes"),
         }
     }
     /*
-        pub fn set_xdata(mut self, x_data: &'p [T]) {
+        pub fn set_xdata(mut self, x_data: &'py [T]) {
             match &mut self {
                 Axes::Axes2d(ax2d) => ax2d.set_xdata(x_data),
             }
         }
 
-        pub fn set_ydata(mut self, y_data: &'p [T]) {
+        pub fn set_ydata(mut self, y_data: &'py [T]) {
             match &mut self {
                 Axes::Axes2d(ax2d) => ax2d.set_ydata(y_data),
             }

@@ -3,15 +3,15 @@ use pyo3::types::*;
 // use crate::addition_objs::colormap::Colormap;
 use crate::plots::*;
 
-pub enum PlotData<'p, T: pyo3::conversion::ToPyObject> {
+pub enum PlotData<'py, T: pyo3::conversion::ToPyObject> {
     // https://matplotlib.org/3.2.2/api/axes_api.html#plotting
-    Scatter(Scatter<'p, T>),
+    Scatter(Scatter<'py, T>),
     // Plot(Plot),
-    PlotSurface(PlotSurface<'p, T>),
+    PlotSurface(PlotSurface<'py, T>),
 }
 
 // possibly make a second type of PlotData corresponding to the different axis types
-impl<'p, T: pyo3::conversion::ToPyObject> PlotData<'p, T> {
+impl<'py, T: pyo3::conversion::ToPyObject> PlotData<'py, T> {
     pub fn identify(&self) -> String {
         // gets name of plotdata method call
         match self {
@@ -21,7 +21,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> PlotData<'p, T> {
         }
     }
 
-    pub fn get_plotdata_pyargs(&self, py: Python<'p>) -> &PyTuple {
+    pub fn get_plotdata_pyargs(&self, py: Python<'py>) -> &PyTuple {
         // gets args and returns them as a &PyTuple
         match self {
             PlotData::Scatter(scatter_plot) => scatter_plot.get_plot_pyargs(py),
@@ -30,7 +30,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> PlotData<'p, T> {
         }
     }
 
-    pub fn get_plotdata_pykwargs(&self, py: Python<'p>, mpl: &'p PyModule) -> &PyDict {
+    pub fn get_plotdata_pykwargs(&self, py: Python<'py>, mpl: &'py PyModule) -> &PyDict {
         match self {
             PlotData::Scatter(scatter_plot) => scatter_plot.get_plot_kwargs(py, mpl), //placeholder
             PlotData::PlotSurface(surface_plot) => surface_plot.get_plot_kwargs(py, mpl),

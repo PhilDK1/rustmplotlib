@@ -6,16 +6,16 @@ use pyo3::prelude::*;
 use pyo3::types::*;
 
 
-pub struct Axes3D<'p, T: pyo3::conversion::ToPyObject> {
-    plot_data: Option<PlotData<'p, T>>,
+pub struct Axes3D<'py, T: pyo3::conversion::ToPyObject> {
+    plot_data: Option<PlotData<'py, T>>,
     title: Option<String>, // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.set_title.html#matplotlib-axes-axes-set-title
     xlabel: Option<String>, //https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.set_xlabel.html#matplotlib.axes.Axes.set_xlabel
     ylabel: Option<String>, //https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.set_ylabel.html#matplotlib.axes.Axes.set_ylabel
     plot_index: Option<usize>,
 }
 
-impl<'p, T: pyo3::conversion::ToPyObject> Axes3D<'p, T> {
-    pub fn empty() -> Axes3D<'p, T> {
+impl<'py, T: pyo3::conversion::ToPyObject> Axes3D<'py, T> {
+    pub fn empty() -> Axes3D<'py, T> {
         Axes3D {
             plot_data: None,
             title: None,
@@ -25,7 +25,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes3D<'p, T> {
         }
     }
 
-    pub fn get_kwargs(&self, py: Python<'p>) -> &PyDict {
+    pub fn get_kwargs(&self, py: Python<'py>) -> &PyDict {
         let new_dict = PyDict::new(py);
         new_dict
     }
@@ -88,7 +88,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Axes3D<'p, T> {
         }
     }
 
-    pub fn get_plot_data(&self) -> Result<&PlotData<'p, T>, &'static str> {
+    pub fn get_plot_data(&self) -> Result<&PlotData<'py, T>, &'static str> {
         // gets the plotdata if specified else errors
         match &self.plot_data {
             Some(plot_data) => Ok(plot_data),

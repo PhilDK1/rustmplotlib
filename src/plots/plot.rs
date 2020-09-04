@@ -4,17 +4,17 @@
 use pyo3::prelude::*;
 use pyo3::types::*;
 
-pub struct Plot<'p, T: pyo3::conversion::ToPyObject> {
+pub struct Plot<'py, T: pyo3::conversion::ToPyObject> {
     // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.plot.html#matplotlib.axes.Axes.plot
-    x: &'p [T],
-    y: &'p [T],
+    x: &'py [T],
+    y: &'py [T],
     fmt: Option<String>,
     scalex: bool,
     scaley: bool,
 }
 
-impl<'p, T: pyo3::conversion::ToPyObject> Plot<'p, T: pyo3::conversion::ToPyObject>{
-    pub fn new(x: &[T], y: &[T]) -> Plot<'p, T> {
+impl<'py, T: pyo3::conversion::ToPyObject> Plot<'py, T: pyo3::conversion::ToPyObject>{
+    pub fn new(x: &[T], y: &[T]) -> Plot<'py, T> {
         Plot {
             x,
             y,
@@ -30,7 +30,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Plot<'p, T: pyo3::conversion::ToPyObje
     }
 }
 
-pub struct Line2D<'p, T: pyo3::conversion::ToPyObject> {
+pub struct Line2D<'py, T: pyo3::conversion::ToPyObject> {
         // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.lines.Line2D.html#matplotlib.lines.Line2D
         // agg_filter,
         // alpha: Option<f32>,

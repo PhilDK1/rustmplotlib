@@ -3,10 +3,10 @@ use crate::addition_objs::markerstyle::MarkerStyle;
 use crate::addition_objs::normalize::Normalize;
 use pyo3::prelude::*;
 use pyo3::types::*;
-pub struct Scatter<'p, T: pyo3::conversion::ToPyObject> {
+pub struct Scatter<'py, T: pyo3::conversion::ToPyObject> {
     // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.scatter.html#matplotlib.axes.Axes.scatter
-    x_data: &'p [T],
-    y_data: &'p [T],
+    x_data: &'py [T],
+    y_data: &'py [T],
     marker_style: Option<MarkerStyle>,
     cmap: Option<Colormap>,
     norm: Option<Normalize>,
@@ -16,8 +16,8 @@ pub struct Scatter<'p, T: pyo3::conversion::ToPyObject> {
     plotnonfinite: bool,
 }
 
-impl<'p, T: pyo3::conversion::ToPyObject> Scatter<'p, T> {
-    pub fn new(x: &'p [T], y: &'p [T]) -> Scatter<'p, T> {
+impl<'py, T: pyo3::conversion::ToPyObject> Scatter<'py, T> {
+    pub fn new(x: &'py [T], y: &'py [T]) -> Scatter<'py, T> {
         // makes new scatter plot
         Scatter {
             x_data: &x,
@@ -30,17 +30,17 @@ impl<'p, T: pyo3::conversion::ToPyObject> Scatter<'p, T> {
         }
     }
 
-    pub fn set_xdata(&mut self, x_data: &'p [T]) {
+    pub fn set_xdata(&mut self, x_data: &'py [T]) {
         // resets xdata over what was previously there
         self.x_data = x_data;
     }
 
-    pub fn set_ydata(&mut self, y_data: &'p [T]) {
+    pub fn set_ydata(&mut self, y_data: &'py [T]) {
         // resets ydata over what was previously there
         self.y_data = y_data;
     }
 
-    pub fn get_plot_pyargs(&self, py: Python<'p>) -> &PyTuple {
+    pub fn get_plot_pyargs(&self, py: Python<'py>) -> &PyTuple {
         // makes into &PyTuple to pass up to calling function
         PyTuple::new(
             py,
@@ -70,7 +70,7 @@ impl<'p, T: pyo3::conversion::ToPyObject> Scatter<'p, T> {
         self.plotnonfinite = true;
     }
 
-    pub fn get_plot_kwargs(&self, py: Python<'p>, mpl: &'p PyModule) -> &PyDict {
+    pub fn get_plot_kwargs(&self, py: Python<'py>, mpl: &'py PyModule) -> &PyDict {
         // returns a reference to a pydict, with the various kwargs that are required, sets to None if not specified
         let new_dict = PyDict::new(py);
 
