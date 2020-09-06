@@ -3,8 +3,9 @@
 // use crate::addition_objs::normalize::Normalize;
 use pyo3::prelude::*;
 use pyo3::types::*;
+use numpy::{PyArray, Element};
 
-pub struct Plot<'py, T: pyo3::conversion::ToPyObject> {
+pub struct Plot<'py, T: pyo3::conversion::ToPyObject+ Element> {
     // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.plot.html#matplotlib.axes.Axes.plot
     x: &'py [T],
     y: &'py [T],
@@ -13,7 +14,7 @@ pub struct Plot<'py, T: pyo3::conversion::ToPyObject> {
     scaley: bool,
 }
 
-impl<'py, T: pyo3::conversion::ToPyObject> Plot<'py, T: pyo3::conversion::ToPyObject>{
+impl<'py, T: pyo3::conversion::ToPyObject + Element> Plot<'py, T: pyo3::conversion::ToPyObject>{
     pub fn new(x: &[T], y: &[T]) -> Plot<'py, T> {
         Plot {
             x,
@@ -30,7 +31,7 @@ impl<'py, T: pyo3::conversion::ToPyObject> Plot<'py, T: pyo3::conversion::ToPyOb
     }
 }
 
-pub struct Line2D<'py, T: pyo3::conversion::ToPyObject> {
+pub struct Line2D<'py, T: pyo3::conversion::ToPyObject + Element> {
         // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.lines.Line2D.html#matplotlib.lines.Line2D
         // agg_filter,
         // alpha: Option<f32>,

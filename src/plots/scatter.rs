@@ -3,6 +3,9 @@ use crate::addition_objs::markerstyle::MarkerStyle;
 use crate::addition_objs::normalize::Normalize;
 use pyo3::prelude::*;
 use pyo3::types::*;
+use ndarray::prelude::*;
+// use ndarray::IntoDimension;
+use numpy::{PyArray, Element};
 pub struct Scatter<'py, T: pyo3::conversion::ToPyObject> {
     // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.scatter.html#matplotlib.axes.Axes.scatter
     x_data: &'py [T],
@@ -16,7 +19,7 @@ pub struct Scatter<'py, T: pyo3::conversion::ToPyObject> {
     plotnonfinite: bool,
 }
 
-impl<'py, T: pyo3::conversion::ToPyObject> Scatter<'py, T> {
+impl<'py, T: pyo3::conversion::ToPyObject + Element> Scatter<'py, T> {
     pub fn new(x: &'py [T], y: &'py [T]) -> Scatter<'py, T> {
         // makes new scatter plot
         Scatter {
@@ -42,10 +45,18 @@ impl<'py, T: pyo3::conversion::ToPyObject> Scatter<'py, T> {
 
     pub fn get_plot_pyargs(&self, py: Python<'py>) -> &PyTuple {
         // makes into &PyTuple to pass up to calling function
+        let (x, y) = self.to_np_array(py);
         PyTuple::new(
             py,
-            vec![self.x_data.to_owned(), self.y_data.to_owned()].into_iter(),
+            vec![x, y].into_iter()
+            // vec![self.x_data.to_owned(), self.y_data.to_owned()].into_iter()
         )
+    }
+
+    fn to_np_array(&self, py: Python<'py>) -> (&PyArray<T, Ix1>,&PyArray<T, Ix1>,)  {
+        let x: &PyArray<T, Ix1> = PyArray::from_slice(py, self.x_data);
+        let y: &PyArray<T, Ix1> = PyArray::from_slice(py, self.y_data);
+        (x, y)
     }
 
     pub fn set_marker(&mut self, markerstyle: MarkerStyle) {

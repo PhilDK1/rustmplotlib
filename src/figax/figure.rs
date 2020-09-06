@@ -1,8 +1,8 @@
 use crate::common::Env;
 use crate::figax::axes;
 use pyo3::prelude::*;
-
-pub struct Figure<'py, T: pyo3::conversion::ToPyObject> {
+use numpy::Element;
+pub struct Figure<'py, T: pyo3::conversion::ToPyObject + Element> {
     // Meant to represent matplotlib.figure.figure instance
     py: Python<'py>,
     plt: &'py PyModule,
@@ -10,7 +10,7 @@ pub struct Figure<'py, T: pyo3::conversion::ToPyObject> {
     subplots: Subplots<'py, T>,
 }
 
-impl<'py, T: pyo3::conversion::ToPyObject> Figure<'py, T> {
+impl<'py, T: pyo3::conversion::ToPyObject + Element> Figure<'py, T> {
     pub fn new<'a: 'py>(env: &'a Env) -> Figure<'py, T> {
         // instantiate the figure object
 
@@ -107,13 +107,13 @@ impl<'py, T: pyo3::conversion::ToPyObject> Figure<'py, T> {
     }
 }
 
-struct Subplots<'py, T: pyo3::conversion::ToPyObject> {
+struct Subplots<'py, T: pyo3::conversion::ToPyObject + Element> {
     // container for Axes within a figure
     axes: Vec<axes::Axes<'py, T>>,
     grid_layout: Option<(usize, usize)>,
 }
 
-impl<'py, T: pyo3::conversion::ToPyObject> Subplots<'py, T> {
+impl<'py, T: pyo3::conversion::ToPyObject + Element> Subplots<'py, T> {
     pub fn initialise() -> Subplots<'py, T> {
         // function to make an empty Subplots object
         Subplots {

@@ -4,8 +4,9 @@ use crate::figax::plots::*;
 use crate::plots::scatter::*;
 use pyo3::prelude::*;
 use pyo3::types::*;
+use numpy::Element;
 
-pub struct Axes2D<'py, T: pyo3::conversion::ToPyObject> {
+pub struct Axes2D<'py, T: pyo3::conversion::ToPyObject+ Element> {
     plot_data: Option<PlotData<'py, T>>,
     title: Option<String>, // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.set_title.html#matplotlib-axes-axes-set-title
     xlabel: Option<String>, //https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.set_xlabel.html#matplotlib.axes.Axes.set_xlabel
@@ -13,7 +14,7 @@ pub struct Axes2D<'py, T: pyo3::conversion::ToPyObject> {
     plot_index: Option<usize>,
 }
 
-impl<'py, T: pyo3::conversion::ToPyObject> Axes2D<'py, T> {
+impl<'py, T: pyo3::conversion::ToPyObject+ Element> Axes2D<'py, T> {
     pub fn empty() -> Axes2D<'py, T> {
         // creates empty instance of Axes
         Axes2D::<T> {

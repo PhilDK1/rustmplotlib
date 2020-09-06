@@ -2,8 +2,9 @@ use pyo3::prelude::*;
 use pyo3::types::*;
 // use crate::addition_objs::colormap::Colormap;
 use crate::plots::*;
+use numpy::Element;
 
-pub enum PlotData<'py, T: pyo3::conversion::ToPyObject> {
+pub enum PlotData<'py, T: pyo3::conversion::ToPyObject + Element> {
     // https://matplotlib.org/3.2.2/api/axes_api.html#plotting
     Scatter(Scatter<'py, T>),
     // Plot(Plot),
@@ -11,7 +12,7 @@ pub enum PlotData<'py, T: pyo3::conversion::ToPyObject> {
 }
 
 // possibly make a second type of PlotData corresponding to the different axis types
-impl<'py, T: pyo3::conversion::ToPyObject> PlotData<'py, T> {
+impl<'py, T: pyo3::conversion::ToPyObject + Element> PlotData<'py, T> {
     pub fn identify(&self) -> String {
         // gets name of plotdata method call
         match self {

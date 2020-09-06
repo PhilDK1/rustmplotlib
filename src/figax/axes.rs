@@ -5,13 +5,13 @@ use crate::figax::plots::*;
 use crate::figax::axes_types::*;
 use pyo3::prelude::*;
 use pyo3::types::*;
-
-pub enum Axes<'py, T: pyo3::conversion::ToPyObject> {
+use numpy::Element;
+pub enum Axes<'py, T: pyo3::conversion::ToPyObject + Element> {
     Axes2d(Axes2D<'py, T>),
     Axes3d(Axes3D<'py, T>),
 }
 
-impl<'py, T: pyo3::conversion::ToPyObject> Axes<'py, T> {
+impl<'py, T: pyo3::conversion::ToPyObject+ Element> Axes<'py, T> {
     pub fn axes2d() -> Axes<'py, T> {
         Axes::Axes2d(Axes2D::empty())
     }
