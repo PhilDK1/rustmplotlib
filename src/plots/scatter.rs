@@ -1,15 +1,20 @@
+#![allow(unused_imports)]
 use crate::addition_objs::colormap::Colormap;
 use crate::addition_objs::markerstyle::MarkerStyle;
 use crate::addition_objs::normalize::Normalize;
 use pyo3::prelude::*;
 use pyo3::types::*;
 use ndarray::prelude::*;
+use ndarray::{Array,Array1};
 // use ndarray::IntoDimension;
 use numpy::{PyArray, Element};
+use std::marker::PhantomData;
 pub struct Scatter<'py, T: pyo3::conversion::ToPyObject+ Element> {
     // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.scatter.html#matplotlib.axes.Axes.scatter
-    x_data: &'py [T],
-    y_data: &'py [T],
+    // x_data: &'py [T],
+    x_data: Array1<T>,
+    phantom: PhantomData<&'py T>,
+    y_data: Array1<T>,
     marker_style: Option<MarkerStyle>,
     cmap: Option<Colormap>,
     norm: Option<Normalize>,
@@ -22,9 +27,12 @@ pub struct Scatter<'py, T: pyo3::conversion::ToPyObject+ Element> {
 impl<'py, T: pyo3::conversion::ToPyObject + Element> Scatter<'py, T> {
     pub fn new(x: &'py [T], y: &'py [T]) -> Scatter<'py, T> {
         // makes new scatter plot
+        let x_val = Array1::from(x.to_owned().to_vec());
+        let y_val = Array1::from(y.to_owned().to_vec());
         Scatter {
-            x_data: &x,
-            y_data: &y,
+            x_data: x_val,
+            y_data: y_val,
+            phantom:PhantomData,
             marker_style: None,
             cmap: None,
             norm: None,
@@ -35,12 +43,12 @@ impl<'py, T: pyo3::conversion::ToPyObject + Element> Scatter<'py, T> {
 
     pub fn set_xdata(&mut self, x_data: &'py [T]) {
         // resets xdata over what was previously there
-        self.x_data = x_data;
+        self.x_data = Array1::from(x_data.to_owned().to_vec());
     }
 
     pub fn set_ydata(&mut self, y_data: &'py [T]) {
         // resets ydata over what was previously there
-        self.y_data = y_data;
+        self.y_data = Array1::from(y_data.to_owned().to_vec());
     }
 
     pub fn get_plot_pyargs(&self, py: Python<'py>) -> &PyTuple {
@@ -54,8 +62,8 @@ impl<'py, T: pyo3::conversion::ToPyObject + Element> Scatter<'py, T> {
     }
 
     fn to_np_array(&self, py: Python<'py>) -> (&PyArray<T, Ix1>,&PyArray<T, Ix1>,)  {
-        let x: &PyArray<T, Ix1> = PyArray::from_slice(py, self.x_data);
-        let y: &PyArray<T, Ix1> = PyArray::from_slice(py, self.y_data);
+        let x: &PyArray<T, Ix1> = PyArray::from_array(py, &self.x_data);
+        let y: &PyArray<T, Ix1> = PyArray::from_array(py, &self.y_data);
         (x, y)
     }
 
