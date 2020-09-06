@@ -13,8 +13,8 @@ pub struct Scatter<'py, T: pyo3::conversion::ToPyObject + Element> {
     // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.scatter.html#matplotlib.axes.Axes.scatter
     // x_data: &'py [T],
     x_data: Array1<T>,
-    phantom: PhantomData<&'py T>,
     y_data: Array1<T>,
+    phantom: PhantomData<&'py T>,
     marker_style: Option<MarkerStyle>,
     cmap: Option<Colormap>,
     norm: Option<Normalize>,
@@ -53,14 +53,14 @@ impl<'py, T: pyo3::conversion::ToPyObject + Element> Scatter<'py, T> {
 
     pub fn get_plot_pyargs(&self, py: Python<'py>) -> &PyTuple {
         // makes into &PyTuple to pass up to calling function
-        let (x, y) = self.to_np_array(py);
+        let (x, y) = self.data_as_np_array(py);
         PyTuple::new(
             py,
             vec![x, y].into_iter(), // vec![self.x_data.to_owned(), self.y_data.to_owned()].into_iter()
         )
     }
 
-    fn to_np_array(&self, py: Python<'py>) -> (&PyArray<T, Ix1>, &PyArray<T, Ix1>) {
+    fn data_as_np_array(&self, py: Python<'py>) -> (&PyArray<T, Ix1>, &PyArray<T, Ix1>) {
         let x: &PyArray<T, Ix1> = PyArray::from_array(py, &self.x_data);
         let y: &PyArray<T, Ix1> = PyArray::from_array(py, &self.y_data);
         (x, y)
