@@ -6,7 +6,7 @@ use pyo3::types::*;
 use ndarray::prelude::*;
 // use ndarray::IntoDimension;
 use numpy::{PyArray, Element};
-pub struct Scatter<'py, T: pyo3::conversion::ToPyObject> {
+pub struct Scatter<'py, T: pyo3::conversion::ToPyObject+ Element> {
     // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.scatter.html#matplotlib.axes.Axes.scatter
     x_data: &'py [T],
     y_data: &'py [T],
