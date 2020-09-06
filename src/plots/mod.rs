@@ -1,5 +1,5 @@
-pub mod scatter;
 pub mod plotsurface;
+pub mod scatter;
 
-pub use scatter::*;
 pub use plotsurface::*;
+pub use scatter::*;

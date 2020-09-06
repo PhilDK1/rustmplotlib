@@ -10,7 +10,7 @@ pub struct PlotSurface<'py, T: pyo3::conversion::ToPyObject> {
     z: &'py [T],
 }
 
-impl<'py, T: pyo3::conversion::ToPyObject> PlotSurface<'py,T>{
+impl<'py, T: pyo3::conversion::ToPyObject> PlotSurface<'py, T> {
     pub fn get_plot_pyargs(&self, py: Python<'py>) -> &PyTuple {
         // makes into &PyTuple to pass up to calling function
         PyTuple::new(
@@ -23,8 +23,8 @@ impl<'py, T: pyo3::conversion::ToPyObject> PlotSurface<'py,T>{
     fn create_mesh_args(&self) {
         let len_x = self.x.len();
         let len_y = self.y.len();
-        let _new_x: Vec<Vec<T>>= Vec::new();
-        let _new_y: Vec<Vec<T>>= Vec::new();
+        let _new_x: Vec<Vec<T>> = Vec::new();
+        let _new_y: Vec<Vec<T>> = Vec::new();
         // let s = self.x.to_vec();
 
         for _i in 0..len_y {

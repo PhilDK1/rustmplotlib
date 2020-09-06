@@ -3,15 +3,15 @@ use crate::figax::plots::*;
 // use crate::addition_objs::colormap::Colormap;
 // use crate::addition_objs::markerstyle::MarkerStyle;
 use crate::figax::axes_types::*;
+use numpy::Element;
 use pyo3::prelude::*;
 use pyo3::types::*;
-use numpy::Element;
 pub enum Axes<'py, T: pyo3::conversion::ToPyObject + Element> {
     Axes2d(Axes2D<'py, T>),
     Axes3d(Axes3D<'py, T>),
 }
 
-impl<'py, T: pyo3::conversion::ToPyObject+ Element> Axes<'py, T> {
+impl<'py, T: pyo3::conversion::ToPyObject + Element> Axes<'py, T> {
     pub fn axes2d() -> Axes<'py, T> {
         Axes::Axes2d(Axes2D::empty())
     }
@@ -58,7 +58,6 @@ impl<'py, T: pyo3::conversion::ToPyObject+ Element> Axes<'py, T> {
         match &self {
             Axes::Axes2d(ax2d) => ax2d.get_title(),
             Axes::Axes3d(ax3d) => ax3d.get_title(),
-
         }
     }
 
@@ -66,7 +65,6 @@ impl<'py, T: pyo3::conversion::ToPyObject+ Element> Axes<'py, T> {
         match &mut self {
             Axes::Axes2d(ax2d) => ax2d.set_xlabel(xlabel),
             Axes::Axes3d(ax3d) => ax3d.set_xlabel(xlabel),
-
         }
     }
 
@@ -74,7 +72,6 @@ impl<'py, T: pyo3::conversion::ToPyObject+ Element> Axes<'py, T> {
         match &self {
             Axes::Axes2d(ax2d) => ax2d.get_xlabel(),
             Axes::Axes3d(ax3d) => ax3d.get_xlabel(),
-
         }
     }
 
@@ -82,7 +79,6 @@ impl<'py, T: pyo3::conversion::ToPyObject+ Element> Axes<'py, T> {
         match &mut self {
             Axes::Axes2d(ax2d) => ax2d.set_ylabel(ylabel),
             Axes::Axes3d(ax3d) => ax3d.set_ylabel(ylabel),
-
         }
     }
 
@@ -90,7 +86,6 @@ impl<'py, T: pyo3::conversion::ToPyObject+ Element> Axes<'py, T> {
         match &self {
             Axes::Axes2d(ax2d) => ax2d.get_ylabel(),
             Axes::Axes3d(ax3d) => ax3d.get_ylabel(),
-
         }
     }
 
@@ -98,14 +93,13 @@ impl<'py, T: pyo3::conversion::ToPyObject+ Element> Axes<'py, T> {
         match &self {
             Axes::Axes2d(ax2d) => ax2d.get_plot_data(),
             Axes::Axes3d(ax3d) => ax3d.get_plot_data(),
-
         }
     }
 
     pub fn scatter(self, x: &'py [T], y: &'py [T]) -> Result<Self, &'static str> {
         match self {
             Axes::Axes2d(ax2d) => Ok(Axes::Axes2d(ax2d.scatter(x, y))),
-            Axes::Axes3d(_ax3d)=> Err("Scatter is not supported with 3d axes"),
+            Axes::Axes3d(_ax3d) => Err("Scatter is not supported with 3d axes"),
         }
     }
     /*

@@ -2,10 +2,9 @@
 // use crate::addition_objs::markerstyle::MarkerStyle;
 use crate::figax::plots::*;
 // use crate::plots::scatter::*;
+use numpy::Element;
 use pyo3::prelude::*;
 use pyo3::types::*;
-use numpy::Element;
-
 
 pub struct Axes3D<'py, T: pyo3::conversion::ToPyObject + Element> {
     plot_data: Option<PlotData<'py, T>>,
@@ -15,7 +14,7 @@ pub struct Axes3D<'py, T: pyo3::conversion::ToPyObject + Element> {
     plot_index: Option<usize>,
 }
 
-impl<'py, T: pyo3::conversion::ToPyObject+ Element> Axes3D<'py, T> {
+impl<'py, T: pyo3::conversion::ToPyObject + Element> Axes3D<'py, T> {
     pub fn empty() -> Axes3D<'py, T> {
         Axes3D {
             plot_data: None,
@@ -43,7 +42,7 @@ impl<'py, T: pyo3::conversion::ToPyObject+ Element> Axes3D<'py, T> {
             None => Err("No index set, try: Axis.set_index(index: usize)"),
         }
     }
-    // --- below directly copied from axes2d.rs 
+    // --- below directly copied from axes2d.rs
     pub fn set_title(&mut self, title: &str) {
         // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.set_title.html#matplotlib-axes-axes-set-title
         // sets title
@@ -107,4 +106,4 @@ impl<'py, T: pyo3::conversion::ToPyObject+ Element> Axes3D<'py, T> {
         }
     }
     // --- end of direct copying
-}   
+}

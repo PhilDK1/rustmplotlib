@@ -1,7 +1,7 @@
 use crate::common::Env;
 use crate::figax::axes;
-use pyo3::prelude::*;
 use numpy::Element;
+use pyo3::prelude::*;
 pub struct Figure<'py, T: pyo3::conversion::ToPyObject + Element> {
     // Meant to represent matplotlib.figure.figure instance
     py: Python<'py>,
