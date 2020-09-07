@@ -1,7 +1,7 @@
 use crate::addition_objs::colormap::Colormap;
 use crate::addition_objs::markerstyle::MarkerStyle;
 use crate::figax::plots::*;
-use crate::plots::scatter::*;
+use crate::plots::*;
 use numpy::Element;
 use pyo3::prelude::*;
 use pyo3::types::*;
@@ -134,6 +134,12 @@ impl<'py, T: pyo3::conversion::ToPyObject + Element> Axes2D<'py, T> {
         self
     }
 
+    pub fn plot(mut self, x: &'py [T], y: &'py [T]) -> Self {
+        let plot: PlotData<'py, T> = PlotData::Plot(Plot::new(x, y));
+        self.plot_data = Some(plot);
+        self
+    }
+
     pub fn set_xdata(&mut self, x_data: &'py [T]) {
         // sets the xdata of the plot type
         match &mut self.plot_data {
@@ -173,7 +179,7 @@ impl<'py, T: pyo3::conversion::ToPyObject + Element> Axes2D<'py, T> {
         match &self.plot_data {
             Some(PlotData::Scatter(_scatter_plot)) => "scatter".to_owned(),
             Some(PlotData::PlotSurface(_surface_plot)) => "plot_surface".to_owned(),
-            // Some(PlotData::Plot(_plot)) => "plot".to_owned(),
+            Some(PlotData::Plot(_plot)) => "plot".to_owned(),
             None => "No known plot specified".to_owned(), // this will completely mess up the call
         }
     }

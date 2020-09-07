@@ -4,21 +4,28 @@
 use pyo3::prelude::*;
 use pyo3::types::*;
 use numpy::{PyArray, Element};
+use std::marker::PhantomData;
+use ndarray::prelude::*;
+use ndarray::Array1;
 
 pub struct Plot<'py, T: pyo3::conversion::ToPyObject+ Element> {
     // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.axes.Axes.plot.html#matplotlib.axes.Axes.plot
-    x: &'py [T],
-    y: &'py [T],
+    x: Array1<T>,
+    y: Array1<T>,
+    phantom: PhantomData<&'py T>,
     fmt: Option<String>,
     scalex: bool,
     scaley: bool,
 }
 
-impl<'py, T: pyo3::conversion::ToPyObject + Element> Plot<'py, T: pyo3::conversion::ToPyObject>{
+impl<'py, T: pyo3::conversion::ToPyObject + Element> Plot<'py, T> {
     pub fn new(x: &[T], y: &[T]) -> Plot<'py, T> {
+        let x_val = Array1::from(x.to_owned().to_vec());
+        let y_val = Array1::from(y.to_owned().to_vec());
         Plot {
-            x,
-            y,
+            x: x_val,
+            y: y_val,
+            phantom: PhantomData,
             fmt: None,
             scalex: false,
             scaley: false,
@@ -29,9 +36,38 @@ impl<'py, T: pyo3::conversion::ToPyObject + Element> Plot<'py, T: pyo3::conversi
     pub fn fmt(&mut self, fmt: String) {
         self.fmt = Some(fmt);
     }
+
+    pub fn get_plot_kwargs(&self, py: Python<'py>, _mpl: &'py PyModule) -> &PyDict {
+        PyDict::new(py)
+    }
+
+    pub fn set_scalex(mut self, scale: bool) -> Self {
+        self.scalex = scale;
+        self
+    }
+
+    pub fn set_scaley(mut self, scale: bool) -> Self {
+        self.scaley = scale;
+        self
+    }
+
+    fn data_as_np_array(&self, py: Python<'py>) -> (&PyArray<T, Ix1>, &PyArray<T, Ix1>) {
+        let x: &PyArray<T, Ix1> = PyArray::from_array(py, &self.x);
+        let y: &PyArray<T, Ix1> = PyArray::from_array(py, &self.y);
+        (x, y)
+    }
+
+    pub fn get_plot_pyargs(&self, py: Python<'py>) -> &PyTuple {
+        // makes into &PyTuple to pass up to calling function
+        let (x, y) = self.data_as_np_array(py);
+        PyTuple::new(
+            py,
+            vec![x, y].into_iter(), // vec![self.x_data.to_owned(), self.y_data.to_owned()].into_iter()
+        )
+    }
 }
 
-pub struct Line2D<'py, T: pyo3::conversion::ToPyObject + Element> {
+// pub struct Line2D<'py, T: pyo3::conversion::ToPyObject + Element> {
         // https://matplotlib.org/3.2.2/api/_as_gen/matplotlib.lines.Line2D.html#matplotlib.lines.Line2D
         // agg_filter,
         // alpha: Option<f32>,
@@ -77,4 +113,4 @@ pub struct Line2D<'py, T: pyo3::conversion::ToPyObject + Element> {
         // zorder: f32,
         
 
-}
+// }

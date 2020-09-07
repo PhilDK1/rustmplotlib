@@ -102,6 +102,13 @@ impl<'py, T: pyo3::conversion::ToPyObject + Element> Axes<'py, T> {
             Axes::Axes3d(_ax3d) => Err("Scatter is not supported with 3d axes"),
         }
     }
+
+    pub fn plot(self, x: &'py [T], y: &'py [T]) -> Result<Self, &'static str> {
+        match self {
+            Axes::Axes2d(ax2d) => Ok(Axes::Axes2d(ax2d.plot(x, y))),
+            Axes::Axes3d(_ax3d) => Err("plot is not supported with 3d axes, try plot_surface"),
+        }
+    }
     /*
         pub fn set_xdata(mut self, x_data: &'py [T]) {
             match &mut self {

@@ -7,7 +7,7 @@ use numpy::Element;
 pub enum PlotData<'py, T: pyo3::conversion::ToPyObject + Element> {
     // https://matplotlib.org/3.2.2/api/axes_api.html#plotting
     Scatter(Scatter<'py, T>),
-    // Plot(Plot),
+    Plot(Plot<'py, T>),
     PlotSurface(PlotSurface<'py, T>),
 }
 
@@ -18,7 +18,7 @@ impl<'py, T: pyo3::conversion::ToPyObject + Element> PlotData<'py, T> {
         match self {
             PlotData::Scatter(_scatter_plot) => "scatter".to_owned(),
             PlotData::PlotSurface(_surface_plot) => "plot_surface".to_owned(),
-            // PlotData::Plot(plot) => "plot".to_owned(),
+            PlotData::Plot(_plot) => "plot".to_owned(),
         }
     }
 
@@ -27,7 +27,7 @@ impl<'py, T: pyo3::conversion::ToPyObject + Element> PlotData<'py, T> {
         match self {
             PlotData::Scatter(scatter_plot) => scatter_plot.get_plot_pyargs(py),
             PlotData::PlotSurface(surface_plot) => surface_plot.get_plot_pyargs(py),
-            // PlotData::Plot(plot) => PyTuple::new(py, vec![].into_iter()),
+            PlotData::Plot(plot) => plot.get_plot_pyargs(py),
         }
     }
 
@@ -35,6 +35,7 @@ impl<'py, T: pyo3::conversion::ToPyObject + Element> PlotData<'py, T> {
         match self {
             PlotData::Scatter(scatter_plot) => scatter_plot.get_plot_kwargs(py, mpl), //placeholder
             PlotData::PlotSurface(surface_plot) => surface_plot.get_plot_kwargs(py, mpl),
+            PlotData::Plot(plot) => plot.get_plot_kwargs(py, mpl),
         }
     }
 }
