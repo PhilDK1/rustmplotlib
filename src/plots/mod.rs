@@ -1,7 +1,7 @@
+pub mod plot;
 pub mod plotsurface;
 pub mod scatter;
-pub mod plot;
 
+pub use plot::*;
 pub use plotsurface::*;
 pub use scatter::*;
-pub use plot::*;

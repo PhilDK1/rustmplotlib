@@ -4,7 +4,6 @@
 use pyo3::prelude::*;
 use pyo3::types::*;
 
-
 pub struct PlotSurface<'py, T: pyo3::conversion::ToPyObject> {
     x: &'py [T],
     y: &'py [T],
